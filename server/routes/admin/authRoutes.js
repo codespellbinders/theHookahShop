@@ -161,6 +161,72 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/reset-super-admin", async (req, res) => {
+  const setupKey = process.env.ADMIN_SETUP_KEY;
+  const providedSetupKey = req.headers["x-setup-key"];
+
+  if (setupKey && providedSetupKey !== setupKey) {
+    return res.status(403).json({ message: "Invalid setup key." });
+  }
+
+  const name = String((req.body && req.body.name) || "").trim();
+  const email = normalizeEmail(req.body && req.body.email);
+  const password = req.body && req.body.password;
+
+  if (!email || !validatePassword(password)) {
+    return res.status(400).json({
+      message: "Email and password (min 8 chars) are required.",
+    });
+  }
+
+  try {
+    const pdb = getPromiseDb();
+    if (!pdb) {
+      return res.status(503).json({ message: "Database unavailable." });
+    }
+
+    const [rows] = await pdb.query(
+      `
+      SELECT au.id, au.name, au.email, au.is_active, r.name AS role
+      FROM admin_users au
+      INNER JOIN roles r ON r.id = au.role_id
+      WHERE au.email = ? AND r.name = 'super_admin'
+      LIMIT 1
+      `,
+      [email]
+    );
+
+    const admin = rows[0];
+    if (!admin) {
+      return res.status(404).json({ message: "Super admin not found." });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+    const nextName = name || admin.name;
+
+    await pdb.query(
+      `
+      UPDATE admin_users
+      SET name = ?, password_hash = ?
+      WHERE id = ?
+      `,
+      [nextName, passwordHash, admin.id]
+    );
+
+    return res.json({
+      message: "Super admin credentials updated successfully.",
+      admin: {
+        id: admin.id,
+        name: nextName,
+        email: admin.email,
+        role: "super_admin",
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to reset super admin.", error: String(error) });
+  }
+});
+
 router.get("/me", authenticateAdmin, async (req, res) => {
   const pdb = getPromiseDb();
   if (!pdb) {
