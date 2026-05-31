@@ -1,7 +1,7 @@
 const express = require("express");
-const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 const db = require("../db");
+const { getTransporter, sendVerificationEmail } = require("../lib/mailer");
 
 const router = express.Router();
 let promiseDb = null;
@@ -29,7 +29,7 @@ async function ensureTables() {
     CREATE TABLE IF NOT EXISTS auth_users (
       id INT AUTO_INCREMENT PRIMARY KEY,
       email VARCHAR(191) NOT NULL UNIQUE,
-      verified_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      verified_at TIMESTAMP NULL DEFAULT NULL,
       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
   `);
@@ -38,25 +38,63 @@ async function ensureTables() {
     CREATE TABLE IF NOT EXISTS email_verification_codes (
       id INT AUTO_INCREMENT PRIMARY KEY,
       email VARCHAR(191) NOT NULL UNIQUE,
-      code VARCHAR(6) NOT NULL,
+      code_hash VARCHAR(191) NOT NULL,
       expires_at DATETIME NOT NULL,
       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
   `);
-}
 
-const transporter =
-  process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS
-    ? nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT) || 587,
-        secure: Number(process.env.SMTP_PORT) === 465,
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
-        },
-      })
-    : null;
+  const [verificationColumns] = await pdb.query(
+    `
+      SELECT COLUMN_NAME
+      FROM INFORMATION_SCHEMA.COLUMNS
+      WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = 'email_verification_codes'
+    `
+  );
+  const verificationColumnNames = new Set(verificationColumns.map((row) => row.COLUMN_NAME));
+
+  if (!verificationColumnNames.has('code_hash')) {
+    await pdb.query(
+      `ALTER TABLE email_verification_codes ADD COLUMN code_hash VARCHAR(191) NULL AFTER email`
+    );
+
+    if (verificationColumnNames.has('code')) {
+      const [legacyRows] = await pdb.query(
+        `SELECT email, code FROM email_verification_codes WHERE code_hash IS NULL AND code IS NOT NULL`
+      );
+
+      for (const row of legacyRows) {
+        await pdb.query(
+          `UPDATE email_verification_codes SET code_hash = ? WHERE email = ?`,
+          [hashCode(row.code), row.email]
+        );
+      }
+    }
+  }
+
+  if (verificationColumnNames.has('code')) {
+    await pdb.query(
+      `ALTER TABLE email_verification_codes MODIFY code VARCHAR(6) NULL DEFAULT NULL`
+    ).catch(() => {});
+  }
+
+  const [userColumns] = await pdb.query(
+    `
+      SELECT COLUMN_NAME
+      FROM INFORMATION_SCHEMA.COLUMNS
+      WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = 'auth_users'
+    `
+  );
+  const userColumnNames = new Set(userColumns.map((row) => row.COLUMN_NAME));
+
+  if (userColumnNames.has('verified_at')) {
+    await pdb.query(
+      `ALTER TABLE auth_users MODIFY verified_at TIMESTAMP NULL DEFAULT NULL`
+    ).catch(() => {});
+  }
+}
 
 function generateCode() {
   return `${Math.floor(100000 + Math.random() * 900000)}`;
@@ -77,35 +115,6 @@ async function ensureTablesOnce() {
   }
 }
 
-function sendMailWithTimeout(transporter, mailMessage, ms = 7000) {
-  return new Promise((resolve, reject) => {
-    let settled = false;
-    const timer = setTimeout(() => {
-      if (!settled) {
-        settled = true;
-        const err = new Error("sendMail timeout");
-        err.code = "SENDMAIL_TIMEOUT";
-        reject(err);
-      }
-    }, ms);
-
-    transporter
-      .sendMail(mailMessage)
-      .then((info) => {
-        if (settled) return;
-        settled = true;
-        clearTimeout(timer);
-        resolve(info);
-      })
-      .catch((err) => {
-        if (settled) return;
-        settled = true;
-        clearTimeout(timer);
-        reject(err);
-      });
-  });
-}
-
 router.post("/send-code", async (req, res) => {
   await ensureTablesOnce(); // Ensure tables before handling request
   const email = String((req.body && req.body.email) || "").trim().toLowerCase();
@@ -114,6 +123,7 @@ router.post("/send-code", async (req, res) => {
     return res.status(400).json({ message: "Email is required." });
   }
 
+  const transporter = await getTransporter();
   console.log("[auth/send-code] request for:", email, "dbConnected:", !!(db && db.isConnected), "transporter:", !!transporter);
 
   const code = generateCode();
@@ -142,20 +152,15 @@ router.post("/send-code", async (req, res) => {
         return res.status(503).json({ message: "Database unavailable; cannot generate verification codes." });
       }
 
-    const mailMessage = {
-      from: process.env.MAIL_FROM || process.env.SMTP_USER || "no-reply@thehookahshop.local",
-      to: email,
-      subject: "Your The Hookah Shop verification code",
-      text: `Your 6-digit verification code is ${code}. It expires in 10 minutes.`,
-    };
-
     console.log("[auth/send-code] after db write, sending email (transporter):", !!transporter);
     if (transporter) {
       try {
-        await sendMailWithTimeout(transporter, mailMessage, 7000);
+        const result = await sendVerificationEmail({ to: email, code });
+        if (result.previewUrl) {
+          console.log(`[MAIL PREVIEW] ${result.previewUrl}`);
+        }
       } catch (mailErr) {
         console.warn("transporter.sendMail failed or timed out:", mailErr && mailErr.message ? mailErr.message : mailErr);
-        // fallback to logging the code in development
         console.log(`[DEV EMAIL-FALLBACK] Verification code for ${email}: ${code}`);
       }
     } else {

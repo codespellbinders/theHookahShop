@@ -23,15 +23,25 @@ function waitForConnection(maxTries = 10) {
 async function run() {
   await waitForConnection();
 
-  const sql = fs.readFileSync(path.join(__dirname, 'migrations', 'init.sql'), 'utf8');
-  const statements = sql.split(/;\s*\n/).map(s => s.trim()).filter(Boolean);
-
   const promiseDb = db.promise();
   try {
-    for (const stmt of statements) {
-      await promiseDb.query(stmt);
-      console.log('Ran:', stmt.split('\n')[0]);
+    const migrationsDir = path.join(__dirname, 'migrations');
+    const migrationFiles = fs
+      .readdirSync(migrationsDir)
+      .filter((name) => name.endsWith('.sql'))
+      .sort();
+
+    for (const fileName of migrationFiles) {
+      const sql = fs.readFileSync(path.join(migrationsDir, fileName), 'utf8');
+      const statements = sql.split(/;\s*\n/).map((s) => s.trim()).filter(Boolean);
+
+      console.log(`Running migration file: ${fileName}`);
+      for (const stmt of statements) {
+        await promiseDb.query(stmt);
+        console.log('Ran:', stmt.split('\n')[0]);
+      }
     }
+
     console.log('Migrations completed');
   } catch (err) {
     console.error('Migration error', err);

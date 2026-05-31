@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   HiOutlineSearch,
   HiOutlineUser,
@@ -11,21 +11,35 @@ import "./Navbar.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
+import { fetchCategories } from "../../services/api";
 
 function Navbar() {
   const [dropdown, setDropdown] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
   const { items, openCart } = useCart();
   const cartCount = items.reduce((s, it) => s + (it.qty || 1), 0);
   const { user } = useAuth();
 
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const rows = await fetchCategories();
+        if (mounted && Array.isArray(rows)) setCategories(rows);
+      } catch (err) {
+        // ignore - we'll fall back to hardcoded links
+      }
+    })();
+    return () => (mounted = false);
+  }, []);
+
   const handleSearchSubmit = (event) => {
     event.preventDefault();
     const query = searchValue.trim();
-
     navigate(query ? `/products?search=${encodeURIComponent(query)}` : "/products");
     setShowSearch(false);
   };
@@ -43,18 +57,18 @@ function Navbar() {
         </Link>
 
         <div className="nav-right">
-            <button
-              type="button"
-              className="nav-icon-button mobile-menu-button"
-              onClick={() => setMobileMenu((m) => !m)}
-              aria-label="Toggle menu"
-            >
-              {mobileMenu ? (
-                <HiOutlineX className="nav-icon" />
-              ) : (
-                <HiOutlineMenu className="nav-icon" />
-              )}
-            </button>
+          <button
+            type="button"
+            className="nav-icon-button mobile-menu-button"
+            onClick={() => setMobileMenu((m) => !m)}
+            aria-label="Toggle menu"
+          >
+            {mobileMenu ? (
+              <HiOutlineX className="nav-icon" />
+            ) : (
+              <HiOutlineMenu className="nav-icon" />
+            )}
+          </button>
           <button
             type="button"
             className="nav-icon-button"
@@ -126,11 +140,25 @@ function Navbar() {
           )}
         </div>
 
-        <Link to="/category/bowls">BOWLS</Link>
-        <Link to="/category/accessories">ACCESSORIES</Link>
-        <Link to="/category/coals">COALS</Link>
-        <Link to="/category/heat-management">HEAT MANAGEMENT DEVICES</Link>
-        <Link to="/category/flavours">FLAVOURS</Link>
+        {/* render categories from API (exclude hookah subcategories handled in dropdown) */}
+        {categories && categories.length
+          ? categories
+              .filter((c) => !String(c.slug || "").includes("hookah"))
+              .map((c) => (
+                <Link key={c.id} to={`/category/${c.slug}`}>
+                  {String(c.name || "").toUpperCase()}
+                </Link>
+              ))
+          : (
+            <>
+              <Link to="/category/bowl">BOWLS</Link>
+              <Link to="/category/accessories">ACCESSORIES</Link>
+              <Link to="/category/coals">COALS</Link>
+              <Link to="/category/heat-management">HEAT MANAGEMENT DEVICES</Link>
+              <Link to="/category/flavours">FLAVOURS</Link>
+            </>
+          )}
+        {/* Admin link removed from public navbar (owner-only) */}
       </nav>
       {mobileMenu && (
         <div className="navbar-menu-mobile container">
@@ -149,11 +177,23 @@ function Navbar() {
             </div>
           </details>
 
-          <Link to="/category/bowls" className="mobile-link" onClick={() => setMobileMenu(false)}>BOWLS</Link>
-          <Link to="/category/accessories" className="mobile-link" onClick={() => setMobileMenu(false)}>ACCESSORIES</Link>
-          <Link to="/category/coals" className="mobile-link" onClick={() => setMobileMenu(false)}>COALS</Link>
-          <Link to="/category/heat-management" className="mobile-link" onClick={() => setMobileMenu(false)}>HEAT MANAGEMENT DEVICES</Link>
-          <Link to="/category/flavours" className="mobile-link" onClick={() => setMobileMenu(false)}>FLAVOURS</Link>
+          {categories && categories.length ? (
+            categories
+              .filter((c) => !String(c.slug || "").includes("hookah"))
+              .map((c) => (
+                <Link key={c.id} to={`/category/${c.slug}`} className="mobile-link" onClick={() => setMobileMenu(false)}>
+                  {c.name}
+                </Link>
+              ))
+          ) : (
+            <>
+              <Link to="/category/bowl" className="mobile-link" onClick={() => setMobileMenu(false)}>BOWLS</Link>
+              <Link to="/category/accessories" className="mobile-link" onClick={() => setMobileMenu(false)}>ACCESSORIES</Link>
+              <Link to="/category/coals" className="mobile-link" onClick={() => setMobileMenu(false)}>COALS</Link>
+              <Link to="/category/heat-management" className="mobile-link" onClick={() => setMobileMenu(false)}>HEAT MANAGEMENT DEVICES</Link>
+              <Link to="/category/flavours" className="mobile-link" onClick={() => setMobileMenu(false)}>FLAVOURS</Link>
+            </>
+          )}
         </div>
       )}
       <div className="announcement-bar">

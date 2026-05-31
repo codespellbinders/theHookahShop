@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import "./Footer.css";
@@ -6,8 +6,24 @@ import "./Footer.css";
 const WHATSAPP_NUMBER = "923178154864";
 const SUPPORT_EMAIL = "support@thehookahshop.pk";
 
+import { fetchCategories } from "../../services/api";
+
 function Footer() {
   const [subscriberEmail, setSubscriberEmail] = useState("");
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const rows = await fetchCategories();
+        if (mounted && Array.isArray(rows)) setCategories(rows);
+      } catch (err) {
+        // ignore
+      }
+    })();
+    return () => (mounted = false);
+  }, []);
   const year = new Date().getFullYear();
 
   const handleSubscribe = (event) => {
@@ -54,7 +70,7 @@ function Footer() {
             <li><Link to="/" onClick={scrollToTop}>Home</Link></li>
             <li><Link to="/products" onClick={scrollToTop}>All Products</Link></li>
             <li><Link to="/category/hookahs" onClick={scrollToTop}>Hookahs</Link></li>
-            <li><Link to="/category/bowls" onClick={scrollToTop}>Bowls</Link></li>
+            <li><Link to="/category/bowl" onClick={scrollToTop}>Bowls</Link></li>
             <li><Link to="/category/accessories" onClick={scrollToTop}>Accessories</Link></li>
             <li><Link to="/checkout" onClick={scrollToTop}>Checkout</Link></li>
           </ul>
@@ -63,12 +79,20 @@ function Footer() {
         <div>
           <h3>Top Categories</h3>
           <ul className="footer-links-list">
-            <li><Link to="/category/premium-hookahs" onClick={scrollToTop}>Premium Hookahs</Link></li>
-            <li><Link to="/category/exclusive-hookahs" onClick={scrollToTop}>Exclusive Hookahs</Link></li>
-            <li><Link to="/category/budget-hookahs" onClick={scrollToTop}>Budget Hookahs</Link></li>
-            <li><Link to="/category/portable-hookahs" onClick={scrollToTop}>Portable Hookahs</Link></li>
-            <li><Link to="/category/royal-hookahs" onClick={scrollToTop}>Royal Hookahs</Link></li>
-            <li><Link to="/category/flavours" onClick={scrollToTop}>Flavours</Link></li>
+            {categories && categories.length ? (
+              categories.slice(0, 6).map((c) => (
+                <li key={c.id}><Link to={`/category/${c.slug}`} onClick={scrollToTop}>{c.name}</Link></li>
+              ))
+            ) : (
+              <>
+                <li><Link to="/category/premium-hookahs" onClick={scrollToTop}>Premium Hookahs</Link></li>
+                <li><Link to="/category/exclusive-hookahs" onClick={scrollToTop}>Exclusive Hookahs</Link></li>
+                <li><Link to="/category/budget-hookahs" onClick={scrollToTop}>Budget Hookahs</Link></li>
+                <li><Link to="/category/portable-hookahs" onClick={scrollToTop}>Portable Hookahs</Link></li>
+                <li><Link to="/category/royal-hookahs" onClick={scrollToTop}>Royal Hookahs</Link></li>
+                <li><Link to="/category/flavours" onClick={scrollToTop}>Flavours</Link></li>
+              </>
+            )}
           </ul>
         </div>
 

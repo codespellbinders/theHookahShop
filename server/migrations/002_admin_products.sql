@@ -1,0 +1,71 @@
+CREATE TABLE IF NOT EXISTS roles (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL UNIQUE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO roles (name)
+SELECT 'super_admin'
+WHERE NOT EXISTS (SELECT 1 FROM roles WHERE name = 'super_admin');
+
+INSERT INTO roles (name)
+SELECT 'sub_admin'
+WHERE NOT EXISTS (SELECT 1 FROM roles WHERE name = 'sub_admin');
+
+CREATE TABLE IF NOT EXISTS admin_users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  email VARCHAR(191) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role_id INT NOT NULL,
+  is_active TINYINT(1) NOT NULL DEFAULT 1,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_admin_users_role
+    FOREIGN KEY (role_id) REFERENCES roles(id)
+    ON UPDATE CASCADE
+    ON DELETE RESTRICT
+);
+
+CREATE TABLE IF NOT EXISTS categories (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  slug VARCHAR(160) NOT NULL UNIQUE,
+  status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS products (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(191) NOT NULL,
+  slug VARCHAR(220) NOT NULL UNIQUE,
+  description TEXT,
+  price DECIMAL(12,2) NOT NULL,
+  sale_price DECIMAL(12,2) NULL,
+  sku VARCHAR(100) UNIQUE,
+  stock_qty INT NOT NULL DEFAULT 0,
+  status ENUM('draft', 'active', 'inactive') NOT NULL DEFAULT 'draft',
+  image_url VARCHAR(255) NULL,
+  category_id INT NOT NULL,
+  created_by INT NULL,
+  updated_by INT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_products_category
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+    ON UPDATE CASCADE
+    ON DELETE RESTRICT,
+  CONSTRAINT fk_products_created_by
+    FOREIGN KEY (created_by) REFERENCES admin_users(id)
+    ON UPDATE CASCADE
+    ON DELETE SET NULL,
+  CONSTRAINT fk_products_updated_by
+    FOREIGN KEY (updated_by) REFERENCES admin_users(id)
+    ON UPDATE CASCADE
+    ON DELETE SET NULL
+);
+
+CREATE INDEX idx_products_category_id ON products(category_id);
+CREATE INDEX idx_products_status ON products(status);
+CREATE INDEX idx_categories_status ON categories(status);

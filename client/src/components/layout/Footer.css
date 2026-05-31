@@ -162,3 +162,13 @@
     align-items: flex-start;
   }
 }
+
+@media (max-width: 420px) {
+  .footer-grid { padding: 28px 12px 20px; gap: 18px; }
+  .footer-brand-column p { max-width: 100%; font-size: 14px; }
+  .footer-social-row a { width: 34px; height: 34px; }
+  .footer-links-list { gap: 6px; }
+  .footer-subscribe > div { grid-template-columns: 1fr; }
+  .footer-subscribe button { width: 100%; }
+  .footer-bottom-row { gap: 8px; }
+}

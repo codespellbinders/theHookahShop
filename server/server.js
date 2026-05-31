@@ -3,6 +3,12 @@ const cors = require("cors");
 const path = require("path");
 
 const authRoutes = require("./routes/authRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const productRoutes = require("./routes/productRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
+const adminAuthRoutes = require("./routes/admin/authRoutes");
+const adminProductRoutes = require("./routes/admin/productRoutes");
+const adminCategoryRoutes = require("./routes/admin/categoryRoutes");
 
 const app = express();
 
@@ -21,5 +27,11 @@ app.post("/api/debug/echo", express.json(), (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/admin/auth", adminAuthRoutes);
+app.use("/api/admin/products", adminProductRoutes);
+app.use("/api/admin/categories", adminCategoryRoutes);
 
 app.listen(5000, () => console.log("Server running on port 5000"));

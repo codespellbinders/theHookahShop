@@ -10,7 +10,80 @@ const getApiBase = () => {
   return `http://${host}:5000/api`;
 };
 
+const getServerBase = () => {
+  const host = window.location.hostname;
+  return `http://${host}:5000`;
+};
+
 const api = axios.create({ baseURL: getApiBase() });
+
+const ADMIN_TOKEN_KEY = "admin_token";
+
+function toNumber(value, fallback = 0) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function normalizeProduct(raw) {
+  const basePrice = toNumber(raw?.price, 0);
+  const salePrice = raw?.sale_price === null || raw?.sale_price === undefined ? null : toNumber(raw.sale_price, 0);
+
+  return {
+    id: Number(raw?.id),
+    name: String(raw?.name || ""),
+    slug: String(raw?.slug || ""),
+    description: String(raw?.description || ""),
+    price: salePrice !== null ? salePrice : basePrice,
+    basePrice,
+    salePrice,
+    sku: raw?.sku || null,
+    stockQty: toNumber(raw?.stock_qty, 0),
+    status: String(raw?.status || "draft"),
+    imageUrl: raw?.image_url || "",
+    categoryId: toNumber(raw?.category_id, 0),
+    category: String(raw?.category_slug || ""),
+    categoryName: String(raw?.category_name || ""),
+    createdAt: raw?.created_at,
+    updatedAt: raw?.updated_at,
+  };
+}
+
+function normalizeCategory(raw) {
+  return {
+    id: Number(raw?.id),
+    name: String(raw?.name || ""),
+    slug: String(raw?.slug || ""),
+    status: String(raw?.status || "active"),
+  };
+}
+
+function authHeaders(token) {
+  return { headers: { Authorization: `Bearer ${token}` } };
+}
+
+export function getAdminToken() {
+  return localStorage.getItem(ADMIN_TOKEN_KEY) || "";
+}
+
+export function setAdminToken(token) {
+  localStorage.setItem(ADMIN_TOKEN_KEY, token);
+}
+
+export function clearAdminToken() {
+  localStorage.removeItem(ADMIN_TOKEN_KEY);
+}
+
+export function extractApiError(error, fallbackMessage = "Request failed") {
+  return error?.response?.data?.message || fallbackMessage;
+}
+
+export function resolveImageUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
+  if (raw.startsWith("/")) return `${getServerBase()}${raw}`;
+  return `${getServerBase()}/${raw}`;
+}
 
 export function sendVerificationCode(email) {
   return api.post("/auth/send-code", { email });
@@ -18,6 +91,64 @@ export function sendVerificationCode(email) {
 
 export function verifyCode(email, code) {
   return api.post("/auth/verify-code", { email, code });
+}
+
+export async function fetchProducts(params = {}) {
+  const response = await api.get("/products", { params });
+  return (response.data?.products || []).map(normalizeProduct);
+}
+
+export async function fetchProductById(id) {
+  const response = await api.get(`/products/${id}`);
+  return normalizeProduct(response.data?.product || {});
+}
+
+export async function fetchCategories(params = {}) {
+  const response = await api.get("/categories", { params });
+  return (response.data?.categories || []).map(normalizeCategory);
+}
+
+export async function adminLogin(email, password) {
+  const response = await api.post("/admin/auth/login", { email, password });
+  return {
+    token: response.data?.token || "",
+    admin: response.data?.admin || null,
+  };
+}
+
+export async function fetchAdminMe(token) {
+  const response = await api.get("/admin/auth/me", authHeaders(token));
+  return response.data?.admin || null;
+}
+
+export async function fetchAdminProducts(token, params = {}) {
+  const response = await api.get("/admin/products", { ...authHeaders(token), params });
+  return (response.data?.products || []).map(normalizeProduct);
+}
+
+export async function createAdminProduct(token, payload) {
+  const response = await api.post("/admin/products", payload, authHeaders(token));
+  return response.data;
+}
+
+export async function updateAdminProduct(token, id, payload) {
+  const response = await api.put(`/admin/products/${id}`, payload, authHeaders(token));
+  return response.data;
+}
+
+export async function deleteAdminProduct(token, id) {
+  const response = await api.delete(`/admin/products/${id}`, authHeaders(token));
+  return response.data;
+}
+
+export async function fetchAdminCategories(token) {
+  const response = await api.get("/admin/categories", authHeaders(token));
+  return (response.data?.categories || []).map(normalizeCategory);
+}
+
+export async function createAdminCategory(token, payload) {
+  const response = await api.post("/admin/categories", payload, authHeaders(token));
+  return response.data;
 }
 
 export default api;
