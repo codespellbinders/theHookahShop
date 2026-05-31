@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "http://hookahshoppakistan.store:5000/api/$1"
+    },
+    {
+      "source": "/uploads/(.*)",
+      "destination": "http://hookahshoppakistan.store:5000/uploads/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

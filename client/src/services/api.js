@@ -1,18 +1,27 @@
 import axios from "axios";
 
-// Use the same host as the frontend but on port 5000 for the API
+function isLocalDevHost(hostname) {
+  return hostname === "localhost" || hostname === "127.0.0.1";
+}
+
+// Use localhost:5000 in local development and same-origin /api in production.
 const getApiBase = () => {
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
-  // Extract host and use it with port 5000
-  const host = window.location.hostname;
-  return `http://${host}:5000/api`;
+  const { hostname, origin } = window.location;
+  if (isLocalDevHost(hostname)) {
+    return `http://${hostname}:5000/api`;
+  }
+  return `${origin}/api`;
 };
 
 const getServerBase = () => {
-  const host = window.location.hostname;
-  return `http://${host}:5000`;
+  const { hostname, origin } = window.location;
+  if (isLocalDevHost(hostname)) {
+    return `http://${hostname}:5000`;
+  }
+  return origin;
 };
 
 const api = axios.create({ baseURL: getApiBase() });
