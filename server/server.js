@@ -12,7 +12,17 @@ const adminCategoryRoutes = require("./routes/admin/categoryRoutes");
 
 const app = express();
 
-app.use(cors());
+const corsOrigins = String(process.env.CORS_ORIGIN || process.env.CLIENT_URL || "")
+	.split(",")
+	.map((origin) => origin.trim())
+	.filter(Boolean);
+
+app.use(
+	cors({
+		origin: corsOrigins.length ? corsOrigins : true,
+		credentials: true,
+	})
+);
 // simple request logger to trace incoming requests
 app.use((req, res, next) => {
 	console.log(`[REQ] ${req.method} ${req.originalUrl}`);
@@ -34,4 +44,6 @@ app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/admin/products", adminProductRoutes);
 app.use("/api/admin/categories", adminCategoryRoutes);
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
