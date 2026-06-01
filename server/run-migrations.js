@@ -2,6 +2,17 @@ const fs = require('fs');
 const path = require('path');
 const db = require('./db');
 
+function isIgnorableMigrationError(err) {
+  return (
+    err &&
+    (
+      err.code === 'ER_TABLE_EXISTS_ERROR' ||
+      err.code === 'ER_DUP_KEYNAME' ||
+      err.code === 'ER_DUP_ENTRY'
+    )
+  );
+}
+
 // Wait a bit for the connection to establish
 function waitForConnection(maxTries = 10) {
   return new Promise((resolve) => {
@@ -37,8 +48,16 @@ async function run() {
 
       console.log(`Running migration file: ${fileName}`);
       for (const stmt of statements) {
-        await promiseDb.query(stmt);
-        console.log('Ran:', stmt.split('\n')[0]);
+        try {
+          await promiseDb.query(stmt);
+          console.log('Ran:', stmt.split('\n')[0]);
+        } catch (err) {
+          if (isIgnorableMigrationError(err)) {
+            console.log('Skipped:', stmt.split('\n')[0], `(${err.code})`);
+            continue;
+          }
+          throw err;
+        }
       }
     }
 

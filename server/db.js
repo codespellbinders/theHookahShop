@@ -10,21 +10,25 @@ const DB_NAME = process.env.DB_NAME || 'hookahshop';
 
 console.log('[DB Config]', { host: DB_HOST, user: DB_USER, password: DB_PASS ? '***set***' : '***empty***', database: DB_NAME });
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
   host: DB_HOST,
   user: DB_USER,
   password: DB_PASS,
   database: DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
-db.connect((err) => {
-  if (err) {
-    console.log("DB Error:", err);
-    db.isConnected = false;
-  } else {
+db.isConnected = true;
+
+db.promise()
+  .query("SELECT 1")
+  .then(() => {
     console.log("MySQL Connected ✅");
-    db.isConnected = true;
-  }
-});
+  })
+  .catch((err) => {
+    console.log("DB Warning:", err.message || err);
+  });
 
 module.exports = db;
