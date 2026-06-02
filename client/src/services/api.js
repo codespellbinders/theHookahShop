@@ -169,4 +169,9 @@ export async function createAdminCategory(token, payload) {
   return response.data;
 }
 
+export async function deleteAdminCategory(token, id) {
+  const response = await api.delete(`/admin/categories/${id}`, authHeaders(token));
+  return response.data;
+}
+
 export default api;

@@ -5,6 +5,7 @@ import {
   createAdminCategory,
   createAdminProduct,
   deleteAdminProduct,
+  deleteAdminCategory,
   extractApiError,
   fetchAdminCategories,
   fetchAdminMe,
@@ -239,6 +240,33 @@ function AdminProducts() {
     }
   };
 
+  const removeCategory = async (category) => {
+    const confirmed = window.confirm(`Delete category \"${category.name}\"?`);
+    if (!confirmed) return;
+
+    setError("");
+    setSuccess("");
+
+    try {
+      await deleteAdminCategory(token, category.id);
+      const updatedCategories = await refreshCategories();
+      setSuccess("Category deleted.");
+
+      if (String(productForm.category_id) === String(category.id)) {
+        setProductForm((prev) => ({
+          ...prev,
+          category_id: updatedCategories.length ? String(updatedCategories[0].id) : "",
+        }));
+      }
+
+      if (String(categoryFilter) === String(category.id)) {
+        setCategoryFilter("all");
+      }
+    } catch (err) {
+      setError(extractApiError(err, "Unable to delete category."));
+    }
+  };
+
   const logout = () => {
     clearAdminToken();
     navigate("/admin/login", { replace: true });
@@ -292,8 +320,13 @@ function AdminProducts() {
                 <ul className="admin-category-list">
                   {categories.map((category) => (
                     <li key={category.id}>
-                      <span>{category.name}</span>
-                      <small>{category.slug}</small>
+                      <div>
+                        <span>{category.name}</span>
+                        <small>{category.slug}</small>
+                      </div>
+                      <button type="button" className="admin-ghost-btn admin-category-delete-btn" onClick={() => removeCategory(category)}>
+                        Delete
+                      </button>
                     </li>
                   ))}
                 </ul>

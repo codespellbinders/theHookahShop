@@ -145,11 +145,25 @@
 .admin-category-list li {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 10px;
   padding: 10px 12px;
   background: #0f0f0f;
   border: 1px solid #262626;
   border-radius: 10px;
+}
+
+.admin-category-list li div {
+  min-width: 0;
+}
+
+.admin-category-list li small {
+  display: block;
+}
+
+.admin-category-delete-btn {
+  padding: 9px 12px;
+  white-space: nowrap;
 }
 
 .admin-products-head {

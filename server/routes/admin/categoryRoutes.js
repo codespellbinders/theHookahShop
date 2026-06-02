@@ -104,4 +104,54 @@ router.post(
   }
 );
 
+router.delete(
+  "/:id",
+  authenticateAdmin,
+  requirePermission("categories.delete"),
+  async (req, res) => {
+    const categoryId = Number.parseInt(req.params.id, 10);
+    if (!Number.isInteger(categoryId) || categoryId <= 0) {
+      return res.status(400).json({ message: "Invalid category id." });
+    }
+
+    try {
+      const pdb = getPromiseDb();
+      if (!pdb) {
+        return res.status(503).json({ message: "Database unavailable." });
+      }
+
+      const [categoryRows] = await pdb.query(
+        "SELECT id, name FROM categories WHERE id = ? LIMIT 1",
+        [categoryId]
+      );
+
+      const category = categoryRows[0];
+      if (!category) {
+        return res.status(404).json({ message: "Category not found." });
+      }
+
+      const [productRows] = await pdb.query(
+        "SELECT COUNT(*) AS product_count FROM products WHERE category_id = ?",
+        [categoryId]
+      );
+
+      const productCount = Number(productRows?.[0]?.product_count || 0);
+      if (productCount > 0) {
+        return res.status(409).json({
+          message: `Cannot delete category because it is used by ${productCount} product${productCount === 1 ? "" : "s"}.`,
+        });
+      }
+
+      await pdb.query("DELETE FROM categories WHERE id = ?", [categoryId]);
+
+      return res.json({
+        message: "Category deleted successfully.",
+        category: { id: category.id, name: category.name },
+      });
+    } catch (error) {
+      return res.status(500).json({ message: "Failed to delete category.", error: String(error) });
+    }
+  }
+);
+
 module.exports = router;
