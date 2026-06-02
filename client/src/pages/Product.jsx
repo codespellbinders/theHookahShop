@@ -59,12 +59,15 @@ function Product() {
         <div className="product-details">
           <h1>{product.name}</h1>
           <p className="product-price">
-            Rs {product.price.toLocaleString()}
+            {product.salePrice !== null && product.salePrice < product.basePrice ? (
+              <>
+                <span className="product-base-price">Rs {product.basePrice.toLocaleString()}</span>
+                <span className="product-sale-price"> Rs {product.price.toLocaleString()}</span>
+              </>
+            ) : (
+              <>Rs {product.price.toLocaleString()}</>
+            )}
           </p>
-
-          {product.salePrice !== null ? (
-            <p className="product-base-price">Base Price: Rs {product.basePrice.toLocaleString()}</p>
-          ) : null}
 
           <p className="product-category">
             {(product.categoryName || product.category || "uncategorized").replace(/-/g, " ").toUpperCase()}

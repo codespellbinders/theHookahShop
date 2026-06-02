@@ -70,6 +70,18 @@
   margin-bottom: 18px;
 }
 
+.product-base-price {
+  text-decoration: line-through;
+  color: #d16b6b;
+  margin-right: 8px;
+  font-size: 13px;
+}
+
+.product-sale-price {
+  color: #c9a227;
+  font-weight: 600;
+}
+
 /* BUTTON */
 .view-btn {
   background: transparent;

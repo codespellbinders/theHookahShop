@@ -17,7 +17,14 @@ function ProductCard({ product }) {
         <div className="product-info">
           <h3>{product.name}</h3>
           <p className="product-price">
-            Rs {product.price.toLocaleString()}
+            {product.salePrice !== null && product.salePrice < product.basePrice ? (
+              <>
+                <span className="product-base-price">Rs {product.basePrice.toLocaleString()}</span>
+                <span className="product-sale-price"> Rs {product.price.toLocaleString()}</span>
+              </>
+            ) : (
+              <>Rs {product.price.toLocaleString()}</>
+            )}
           </p>
         </div>
       </div>

@@ -41,9 +41,17 @@
 }
 
 .product-base-price {
-  margin-top: -12px;
-  margin-bottom: 20px;
-  color: #9e9e9e;
+  text-decoration: line-through;
+  color: #d16b6b;
+  margin-right: 12px;
+  display: inline-block;
+  font-size: 18px;
+}
+
+.product-sale-price {
+  color: #c9a227;
+  font-weight: 700;
+  font-size: 22px;
 }
 
 .product-category {
