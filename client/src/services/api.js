@@ -4,10 +4,19 @@ function isLocalDevHost(hostname) {
   return hostname === "localhost" || hostname === "127.0.0.1";
 }
 
-// Use localhost:5000 in local development and same-origin /api in production.
+function normalizeApiBase(value) {
+  const trimmed = String(value || "").trim().replace(/\/$/, "");
+  if (!trimmed) {
+    return "";
+  }
+
+  return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
+}
+
+// Use localhost:5000 in local development and normalize production env values to /api.
 const getApiBase = () => {
   if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
+    return normalizeApiBase(import.meta.env.VITE_API_URL);
   }
   const { hostname, origin } = window.location;
   if (isLocalDevHost(hostname)) {
