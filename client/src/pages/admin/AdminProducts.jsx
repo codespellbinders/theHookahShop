@@ -11,6 +11,7 @@ import {
   fetchAdminMe,
   fetchAdminProducts,
   getAdminToken,
+  resolveImageUrl,
   updateAdminProduct,
 } from "../../services/api";
 import "./admin.css";
@@ -46,6 +47,8 @@ function AdminProducts() {
 
   const [editingProductId, setEditingProductId] = useState(null);
   const [productForm, setProductForm] = useState(INITIAL_PRODUCT_FORM);
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState("");
 
   const [categoryName, setCategoryName] = useState("");
   const [categoryStatus, setCategoryStatus] = useState("active");
@@ -109,7 +112,12 @@ function AdminProducts() {
   }
 
   const resetProductForm = () => {
+    if (imagePreviewUrl && imagePreviewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
     setEditingProductId(null);
+    setSelectedImageFile(null);
+    setImagePreviewUrl("");
     setProductForm({
       ...INITIAL_PRODUCT_FORM,
       category_id: categories.length ? String(categories[0].id) : "",
@@ -132,6 +140,23 @@ function AdminProducts() {
     setProductForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageFileChange = (event) => {
+    const file = event.target.files?.[0] || null;
+
+    if (imagePreviewUrl && imagePreviewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
+
+    setSelectedImageFile(file);
+
+    if (file) {
+      setImagePreviewUrl(URL.createObjectURL(file));
+      return;
+    }
+
+    setImagePreviewUrl(productForm.image_url ? resolveImageUrl(productForm.image_url) : "");
+  };
+
   const handleProductSubmit = async (event) => {
     event.preventDefault();
     setError("");
@@ -144,17 +169,24 @@ function AdminProducts() {
 
     try {
       setSavingProduct(true);
-      const payload = {
-        ...productForm,
-        name: productForm.name.trim(),
-        description: productForm.description.trim(),
-        sku: productForm.sku.trim(),
-        image_url: productForm.image_url.trim(),
-        price: Number(productForm.price),
-        sale_price: productForm.sale_price === "" ? null : Number(productForm.sale_price),
-        stock_qty: Number(productForm.stock_qty),
-        category_id: Number(productForm.category_id),
-      };
+      const payload = new FormData();
+      payload.append("name", productForm.name.trim());
+      payload.append("description", productForm.description.trim());
+      payload.append("sku", productForm.sku.trim());
+      payload.append("status", productForm.status);
+      payload.append("price", String(Number(productForm.price)));
+      payload.append(
+        "sale_price",
+        productForm.sale_price === "" ? "" : String(Number(productForm.sale_price))
+      );
+      payload.append("stock_qty", String(Number(productForm.stock_qty)));
+      payload.append("category_id", String(Number(productForm.category_id)));
+
+      if (selectedImageFile) {
+        payload.append("image", selectedImageFile);
+      } else if (productForm.image_url.trim()) {
+        payload.append("image_url", productForm.image_url.trim());
+      }
 
       if (editingProductId) {
         await updateAdminProduct(token, editingProductId, payload);
@@ -174,7 +206,13 @@ function AdminProducts() {
   };
 
   const editProduct = (product) => {
+    if (imagePreviewUrl && imagePreviewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
+
     setEditingProductId(product.id);
+    setSelectedImageFile(null);
+    setImagePreviewUrl(product.imageUrl ? resolveImageUrl(product.imageUrl) : "");
     setProductForm({
       name: product.name,
       description: product.description || "",
@@ -415,15 +453,25 @@ function AdminProducts() {
                   </select>
                 </div>
                 <div>
-                  <label>Image URL</label>
+                  <label>Image</label>
                   <input
-                    name="image_url"
-                    value={productForm.image_url}
-                    onChange={handleProductInput}
-                    placeholder="/uploads/example.jpg"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/gif"
+                    onChange={handleImageFileChange}
                   />
                 </div>
               </div>
+
+              {imagePreviewUrl ? (
+                <div>
+                  <label>Image Preview</label>
+                  <img
+                    src={imagePreviewUrl}
+                    alt="Product preview"
+                    style={{ width: "120px", height: "120px", objectFit: "cover", borderRadius: "8px" }}
+                  />
+                </div>
+              ) : null}
 
               <div className="admin-form-actions">
                 <button type="submit" className="admin-primary-btn" disabled={savingProduct}>

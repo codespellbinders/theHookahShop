@@ -1,9 +1,49 @@
 const express = require("express");
+const fs = require("fs");
+const path = require("path");
+const multer = require("multer");
 const db = require("../../db");
 const { authenticateAdmin } = require("../../middleware/adminAuth");
 const { requirePermission } = require("../../middleware/rbac");
 
 const router = express.Router();
+
+const uploadDir = path.join(__dirname, "..", "..", "uploads", "products");
+fs.mkdirSync(uploadDir, { recursive: true });
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, uploadDir),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname || "").toLowerCase();
+    const safeExt = ext || ".jpg";
+    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${safeExt}`;
+    cb(null, uniqueName);
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      return cb(new Error("Only JPG, PNG, WEBP, and GIF images are allowed."));
+    }
+    return cb(null, true);
+  },
+});
+
+function uploadProductImage(req, res, next) {
+  upload.single("image")(req, res, (error) => {
+    if (!error) return next();
+
+    if (error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({ message: "Image size must be 5MB or smaller." });
+    }
+
+    return res.status(400).json({ message: error.message || "Invalid image upload." });
+  });
+}
 
 let promiseDb = null;
 
@@ -46,7 +86,8 @@ async function buildUniqueProductSlug(pdb, baseSlug, productIdToExclude) {
   }
 }
 
-function normalizeProductInput(body) {
+function normalizeProductInput(body, file) {
+  const uploadedImageUrl = file ? `/uploads/products/${file.filename}` : null;
   return {
     name: String((body && body.name) || "").trim(),
     description: body && body.description ? String(body.description).trim() : null,
@@ -58,7 +99,8 @@ function normalizeProductInput(body) {
     sku: body && body.sku ? String(body.sku).trim() : null,
     stockQty: body && body.stock_qty !== undefined ? Number(body.stock_qty) : 0,
     status: String((body && body.status) || "draft").trim().toLowerCase(),
-    imageUrl: body && body.image_url ? String(body.image_url).trim() : null,
+    imageUrl:
+      uploadedImageUrl || (body && body.image_url ? String(body.image_url).trim() : null),
     categoryId: body && body.category_id !== undefined ? Number(body.category_id) : NaN,
   };
 }
@@ -200,8 +242,9 @@ router.post(
   "/",
   authenticateAdmin,
   requirePermission("products.create"),
+  uploadProductImage,
   async (req, res) => {
-    const input = normalizeProductInput(req.body);
+    const input = normalizeProductInput(req.body, req.file);
     const validationError = validateProductInput(input);
     if (validationError) {
       return res.status(400).json({ message: validationError });
@@ -267,13 +310,14 @@ router.put(
   "/:id",
   authenticateAdmin,
   requirePermission("products.update"),
+  uploadProductImage,
   async (req, res) => {
     const productId = Number(req.params.id);
     if (!Number.isInteger(productId) || productId <= 0) {
       return res.status(400).json({ message: "Invalid product id." });
     }
 
-    const input = normalizeProductInput(req.body);
+    const input = normalizeProductInput(req.body, req.file);
     const validationError = validateProductInput(input);
     if (validationError) {
       return res.status(400).json({ message: validationError });
