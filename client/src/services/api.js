@@ -13,6 +13,18 @@ function normalizeApiBase(value) {
   return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
 }
 
+function getConfiguredServerBase() {
+  if (import.meta.env.VITE_API_URL) {
+    return normalizeApiBase(import.meta.env.VITE_API_URL).replace(/\/api$/, "");
+  }
+
+  const { hostname, origin } = window.location;
+  if (isLocalDevHost(hostname)) {
+    return `http://${hostname}:5000`;
+  }
+  return origin;
+}
+
 // Use localhost:5000 in local development and normalize production env values to /api.
 const getApiBase = () => {
   if (import.meta.env.VITE_API_URL) {
@@ -26,11 +38,7 @@ const getApiBase = () => {
 };
 
 const getServerBase = () => {
-  const { hostname, origin } = window.location;
-  if (isLocalDevHost(hostname)) {
-    return `http://${hostname}:5000`;
-  }
-  return origin;
+  return getConfiguredServerBase();
 };
 
 const api = axios.create({ baseURL: getApiBase() });
