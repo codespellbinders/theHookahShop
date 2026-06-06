@@ -47,13 +47,13 @@ function Product() {
       <div className="product-container">
 
         <div className="product-image">
-          <div className="image-placeholder">
-            {product.imageUrl ? (
+          {product.imageUrl ? (
+            <div className="image-frame">
               <img src={resolveImageUrl(product.imageUrl)} alt={product.name} />
-            ) : (
-              product.name
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="image-placeholder">{product.name}</div>
+          )}
         </div>
 
         <div className="product-details">
