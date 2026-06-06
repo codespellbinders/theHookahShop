@@ -1,14 +1,43 @@
+import heroHookahVideo from "../../assets/herohookah.mp4";
+
 function Hero() {
   return (
-    <section style={{
-      height: "90vh",
-      background: "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1606248897732-2c5ffe759c04?q=80&w=1974') center/cover",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      textAlign: "center"
-    }}>
-      <div>
+    <section
+      style={{
+        height: "90vh",
+        position: "relative",
+        overflow: "hidden",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center"
+      }}
+    >
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover"
+        }}
+      >
+        <source src={heroHookahVideo} type="video/mp4" />
+      </video>
+
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "rgba(0,0,0,0.6)"
+        }}
+      />
+
+      <div style={{ position: "relative", zIndex: 1 }}>
         <h1 style={{ fontSize: "48px" }}>
           UNWIND IN STYLE
         </h1>
