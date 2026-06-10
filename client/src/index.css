@@ -49,8 +49,25 @@ body {
   gap: 45px;
 }
 
+.category-section {
+  margin-bottom: 72px;
+}
+
+.category-section:last-child {
+  margin-bottom: 0;
+}
+
+.category-section-title {
+  text-align: center;
+  font-size: 28px;
+  margin: 0 0 28px;
+  letter-spacing: 2px;
+}
+
 @media (max-width: 700px) {
   .products-section { padding: 64px 0; }
   .products-title { font-size: 24px; margin-bottom: 36px; }
   .products-grid { gap: 20px; }
+  .category-section { margin-bottom: 48px; }
+  .category-section-title { font-size: 20px; margin-bottom: 20px; }
 }

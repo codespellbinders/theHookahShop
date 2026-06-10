@@ -23,10 +23,20 @@ router.get("/", async (req, res) => {
 
     const [rows] = await pdb.query(
       `
-      SELECT id, name, slug, status, created_at, updated_at
-      FROM categories
+      SELECT
+        c.id,
+        c.name,
+        c.slug,
+        c.parent_category_id,
+        parent.slug AS parent_category_slug,
+        parent.name AS parent_category_name,
+        c.status,
+        c.created_at,
+        c.updated_at
+      FROM categories c
+      LEFT JOIN categories parent ON parent.id = c.parent_category_id
       ${whereSql}
-      ORDER BY name ASC
+      ORDER BY COALESCE(c.parent_category_id, c.id), c.name ASC
       `
     );
 

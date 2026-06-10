@@ -1,23 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import ProductCard from "../components/product/ProductCard";
-import { useSearchParams } from "react-router-dom";
 import { fetchCategories, fetchProducts } from "../services/api";
 
-const HOOKAH_SECTION_ORDER = [
-  "premium-hookahs",
-  "exclusive-hookahs",
-  "budget-hookahs",
-  "portable-hookahs",
-  "royal-hookahs",
-];
-
-function isHookahSection(categorySlug) {
-  const slug = String(categorySlug || "").toLowerCase();
-  return slug.includes("hookah") && slug !== "hookahs";
-}
-
-function formatSectionTitle(category) {
+function formatTitle(category) {
   return String(category?.name || category?.slug || "").toUpperCase();
 }
 
@@ -49,28 +35,32 @@ function Category() {
     };
 
     load();
-  }, [category, search]);
+  }, []);
+
+  const currentCategory = useMemo(
+    () => categories.find((item) => item.slug === category) || null,
+    [categories, category]
+  );
+
+  const childCategories = useMemo(() => {
+    if (!currentCategory) return [];
+    return categories
+      .filter((item) => String(item.parentCategoryId || "") === String(currentCategory.id))
+      .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+  }, [categories, currentCategory]);
+
+  const sectionOverview = childCategories.length > 0;
 
   const categoryTitle = useMemo(() => {
-    const match = categories.find((item) => item.slug === category);
-    return match?.name || category.replace(/-/g, " ").toUpperCase();
-  }, [categories, category]);
+    return currentCategory?.name || category.replace(/-/g, " ").toUpperCase();
+  }, [currentCategory, category]);
 
-  const hookahSections = useMemo(() => {
-    if (category !== "hookahs") return [];
+  const groupedSections = useMemo(() => {
+    if (!sectionOverview) return [];
 
-    const hookahCategories = categories.filter((item) => isHookahSection(item.slug));
-    const categoryMap = new Map(hookahCategories.map((item) => [item.slug, item]));
-
-    const orderedCategories = [
-      ...HOOKAH_SECTION_ORDER.map((slug) => categoryMap.get(slug)).filter(Boolean),
-      ...hookahCategories.filter((item) => !HOOKAH_SECTION_ORDER.includes(item.slug)),
-    ];
-
-    return orderedCategories
-      .map((hookahCategory) => {
-        const items = products.filter((product) => product.category === hookahCategory.slug);
-
+    return childCategories
+      .map((childCategory) => {
+        const items = products.filter((product) => product.category === childCategory.slug);
         const matchedProducts = search
           ? items.filter((product) => {
               const term = search.toLowerCase();
@@ -83,25 +73,26 @@ function Category() {
           : items;
 
         return {
-          key: hookahCategory.slug,
-          title: formatSectionTitle(hookahCategory),
+          key: childCategory.slug,
+          title: formatTitle(childCategory),
           products: matchedProducts,
         };
       })
       .filter((section) => section.products.length > 0);
-  }, [category, categories, products, search]);
+  }, [childCategories, products, search, sectionOverview]);
 
   const categoryProducts = useMemo(() => {
-    if (category === "hookahs") return [];
+    if (sectionOverview) return [];
 
     return products.filter((product) => {
       const matchesCategory = product.category === category;
-      const matchesSearch = !search || product.name.toLowerCase().includes(search.toLowerCase()) || product.categoryName.toLowerCase().includes(search.toLowerCase());
+      const matchesSearch =
+        !search ||
+        product.name.toLowerCase().includes(search.toLowerCase()) ||
+        product.categoryName.toLowerCase().includes(search.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [category, products, search]);
-
-  const isHookahOverview = category === "hookahs";
+  }, [category, products, search, sectionOverview]);
 
   return (
     <section className="products-section">
@@ -111,10 +102,10 @@ function Category() {
         {loading && <p className="muted-message">Loading category...</p>}
         {error && <p className="error-message">{error}</p>}
 
-        {!loading && !error && isHookahOverview && (
+        {!loading && !error && sectionOverview ? (
           <>
-              {hookahSections.length ? (
-              hookahSections.map((section) => (
+            {groupedSections.length ? (
+              groupedSections.map((section) => (
                 <div className="category-section" key={section.key}>
                   <h2 className="category-section-title">{section.title}</h2>
                   <div className="products-grid">
@@ -132,14 +123,14 @@ function Category() {
               ))
             ) : (
               <div className="empty-state">
-                <h3>No hookah products found</h3>
-                <p>Create admin categories like Premium Hookahs and assign products to them.</p>
+                <h3>No products found in this section</h3>
+                <p>Create admin subcategories and assign products to them.</p>
               </div>
             )}
           </>
-        )}
+        ) : null}
 
-        {!loading && !error && !isHookahOverview && (
+        {!loading && !error && !sectionOverview ? (
           <>
             <div className="products-grid">
               {categoryProducts.map((product) => (
@@ -147,14 +138,14 @@ function Category() {
               ))}
             </div>
 
-            {categoryProducts.length === 0 && (
+            {categoryProducts.length === 0 ? (
               <div className="empty-state">
                 <h3>No products found in this category</h3>
                 <p>Use a different search term or choose another category.</p>
               </div>
-            )}
+            ) : null}
           </>
-        )}
+        ) : null}
       </div>
     </section>
   );

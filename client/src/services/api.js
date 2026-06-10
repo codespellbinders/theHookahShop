@@ -79,6 +79,12 @@ function normalizeCategory(raw) {
     id: Number(raw?.id),
     name: String(raw?.name || ""),
     slug: String(raw?.slug || ""),
+    parentCategoryId:
+      raw?.parent_category_id === null || raw?.parent_category_id === undefined
+        ? null
+        : Number(raw.parent_category_id),
+    parentCategorySlug: String(raw?.parent_category_slug || ""),
+    parentCategoryName: String(raw?.parent_category_name || ""),
     status: String(raw?.status || "active"),
   };
 }

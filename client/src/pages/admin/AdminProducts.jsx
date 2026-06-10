@@ -52,6 +52,7 @@ function AdminProducts() {
 
   const [categoryName, setCategoryName] = useState("");
   const [categoryStatus, setCategoryStatus] = useState("active");
+  const [categoryParentId, setCategoryParentId] = useState("");
 
   useEffect(() => {
     if (!token) return;
@@ -261,11 +262,13 @@ function AdminProducts() {
       await createAdminCategory(token, {
         name: categoryName.trim(),
         status: categoryStatus,
+        parent_category_id: categoryParentId ? Number(categoryParentId) : null,
       });
 
       const updatedCategories = await refreshCategories();
       setCategoryName("");
       setCategoryStatus("active");
+      setCategoryParentId("");
       setSuccess("Category created.");
 
       if (!productForm.category_id && updatedCategories.length) {
@@ -345,6 +348,18 @@ function AdminProducts() {
                 <option value="inactive">Inactive</option>
               </select>
 
+              <label>Parent Category</label>
+              <select value={categoryParentId} onChange={(e) => setCategoryParentId(e.target.value)}>
+                <option value="">No parent category</option>
+                {categories
+                  .filter((category) => category.parentCategoryId === null)
+                  .map((category) => (
+                    <option key={category.id} value={String(category.id)}>
+                      {category.name}
+                    </option>
+                  ))}
+              </select>
+
               <button type="submit" className="admin-primary-btn" disabled={savingCategory}>
                 {savingCategory ? "Creating..." : "Create Category"}
               </button>
@@ -361,6 +376,7 @@ function AdminProducts() {
                       <div>
                         <span>{category.name}</span>
                         <small>{category.slug}</small>
+                        {category.parentCategoryName ? <small>Parent: {category.parentCategoryName}</small> : null}
                       </div>
                       <button type="button" className="admin-ghost-btn admin-category-delete-btn" onClick={() => removeCategory(category)}>
                         Delete

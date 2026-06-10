@@ -39,6 +39,15 @@ async function buildUniqueCategorySlug(pdb, baseSlug) {
   }
 }
 
+async function countChildCategories(pdb, categoryId) {
+  const [rows] = await pdb.query(
+    "SELECT COUNT(*) AS child_count FROM categories WHERE parent_category_id = ?",
+    [categoryId]
+  );
+
+  return Number(rows?.[0]?.child_count || 0);
+}
+
 router.get(
   "/",
   authenticateAdmin,
@@ -51,7 +60,21 @@ router.get(
       }
 
       const [rows] = await pdb.query(
-        "SELECT id, name, slug, status, created_at, updated_at FROM categories ORDER BY name ASC"
+        `
+        SELECT
+          c.id,
+          c.name,
+          c.slug,
+          c.parent_category_id,
+          parent.slug AS parent_category_slug,
+          parent.name AS parent_category_name,
+          c.status,
+          c.created_at,
+          c.updated_at
+        FROM categories c
+        LEFT JOIN categories parent ON parent.id = c.parent_category_id
+        ORDER BY COALESCE(c.parent_category_id, c.id), c.name ASC
+        `
       );
 
       return res.json({ categories: rows });
@@ -68,6 +91,11 @@ router.post(
   async (req, res) => {
     const name = String((req.body && req.body.name) || "").trim();
     const status = String((req.body && req.body.status) || "active").trim().toLowerCase();
+    const rawParentCategoryId = req.body && req.body.parent_category_id;
+    const parentCategoryId =
+      rawParentCategoryId === "" || rawParentCategoryId === null || rawParentCategoryId === undefined
+        ? null
+        : Number.parseInt(rawParentCategoryId, 10);
 
     if (!name) {
       return res.status(400).json({ message: "Category name is required." });
@@ -77,16 +105,31 @@ router.post(
       return res.status(400).json({ message: "Status must be active or inactive." });
     }
 
+    if (parentCategoryId !== null && (!Number.isInteger(parentCategoryId) || parentCategoryId <= 0)) {
+      return res.status(400).json({ message: "Invalid parent category id." });
+    }
+
     try {
       const pdb = getPromiseDb();
       if (!pdb) {
         return res.status(503).json({ message: "Database unavailable." });
       }
 
+      if (parentCategoryId !== null) {
+        const [parentRows] = await pdb.query(
+          "SELECT id, name FROM categories WHERE id = ? LIMIT 1",
+          [parentCategoryId]
+        );
+
+        if (!parentRows[0]) {
+          return res.status(404).json({ message: "Parent category not found." });
+        }
+      }
+
       const slug = await buildUniqueCategorySlug(pdb, slugify(name));
       const [result] = await pdb.query(
-        "INSERT INTO categories (name, slug, status) VALUES (?, ?, ?)",
-        [name, slug, status]
+        "INSERT INTO categories (name, slug, parent_category_id, status) VALUES (?, ?, ?, ?)",
+        [name, slug, parentCategoryId, status]
       );
 
       return res.status(201).json({
@@ -95,6 +138,7 @@ router.post(
           id: result.insertId,
           name,
           slug,
+          parent_category_id: parentCategoryId,
           status,
         },
       });
@@ -139,6 +183,13 @@ router.delete(
       if (productCount > 0) {
         return res.status(409).json({
           message: `Cannot delete category because it is used by ${productCount} product${productCount === 1 ? "" : "s"}.`,
+        });
+      }
+
+      const childCount = await countChildCategories(pdb, categoryId);
+      if (childCount > 0) {
+        return res.status(409).json({
+          message: `Cannot delete category because it has ${childCount} subcategor${childCount === 1 ? "y" : "ies"}.`,
         });
       }
 
