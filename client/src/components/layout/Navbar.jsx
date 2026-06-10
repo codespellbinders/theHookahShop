@@ -24,6 +24,21 @@ function Navbar() {
   const cartCount = items.reduce((s, it) => s + (it.qty || 1), 0);
   const { user } = useAuth();
 
+  const hookahSubcategories = categories.filter((category) => {
+    const slug = String(category.slug || "").toLowerCase();
+    return slug.includes("hookah") && slug !== "hookahs";
+  });
+
+  const fallbackHookahSubcategories = [
+    { slug: "premium-hookahs", name: "Premium Hookahs" },
+    { slug: "exclusive-hookahs", name: "Exclusive Hookahs" },
+    { slug: "budget-hookahs", name: "Budget Friendly Hookahs" },
+    { slug: "portable-hookahs", name: "Portable Hookahs" },
+    { slug: "royal-hookahs", name: "Royal Hookahs" },
+  ];
+
+  const hookahMenuItems = hookahSubcategories.length ? hookahSubcategories : fallbackHookahSubcategories;
+
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -131,11 +146,11 @@ function Navbar() {
 
           {dropdown && (
             <div className="dropdown-menu">
-              <Link to="/category/premium-hookahs">PREMIUM HOOKAHS</Link>
-              <Link to="/category/exclusive-hookahs">EXCLUSIVE HOOKAHS</Link>
-              <Link to="/category/budget-hookahs">BUDGET FRIENDLY HOOKAHS</Link>
-              <Link to="/category/portable-hookahs">PORTABLE HOOKAHS</Link>
-              <Link to="/category/royal-hookahs">ROYAL HOOKAHS</Link>
+              {hookahMenuItems.map((item) => (
+                <Link key={item.slug} to={`/category/${item.slug}`}>
+                  {String(item.name || item.slug).toUpperCase()}
+                </Link>
+              ))}
             </div>
           )}
         </div>
@@ -169,11 +184,11 @@ function Navbar() {
           <details className="mobile-details">
             <summary>HOOKAHS</summary>
             <div className="mobile-sublinks">
-              <Link to="/category/premium-hookahs" onClick={() => setMobileMenu(false)}>PREMIUM HOOKAHS</Link>
-              <Link to="/category/exclusive-hookahs" onClick={() => setMobileMenu(false)}>EXCLUSIVE HOOKAHS</Link>
-              <Link to="/category/budget-hookahs" onClick={() => setMobileMenu(false)}>BUDGET FRIENDLY HOOKAHS</Link>
-              <Link to="/category/portable-hookahs" onClick={() => setMobileMenu(false)}>PORTABLE HOOKAHS</Link>
-              <Link to="/category/royal-hookahs" onClick={() => setMobileMenu(false)}>ROYAL HOOKAHS</Link>
+              {hookahMenuItems.map((item) => (
+                <Link key={item.slug} to={`/category/${item.slug}`} onClick={() => setMobileMenu(false)}>
+                  {String(item.name || item.slug).toUpperCase()}
+                </Link>
+              ))}
             </div>
           </details>
 

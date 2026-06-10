@@ -11,8 +11,8 @@ function AuthSignup() {
     e.preventDefault();
     setLoading(true);
     try {
-      await sendVerificationCode(email);
-      navigate(`/auth/verify?email=${encodeURIComponent(email)}`);
+      const res = await sendVerificationCode(email);
+      navigate(`/auth/verify?email=${encodeURIComponent(email)}`, { state: res.data });
     } catch (err) {
       alert(err?.response?.data?.message || "Failed to send code");
     } finally {

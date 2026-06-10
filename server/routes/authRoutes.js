@@ -118,6 +118,7 @@ async function ensureTablesOnce() {
 router.post("/send-code", async (req, res) => {
   await ensureTablesOnce(); // Ensure tables before handling request
   const email = String((req.body && req.body.email) || "").trim().toLowerCase();
+  const isProduction = process.env.NODE_ENV === "production";
 
   if (!email) {
     return res.status(400).json({ message: "Email is required." });
@@ -153,11 +154,13 @@ router.post("/send-code", async (req, res) => {
       }
 
     console.log("[auth/send-code] after db write, sending email (transporter):", !!transporter);
+    let previewUrl = null;
     if (transporter) {
       try {
         const result = await sendVerificationEmail({ to: email, code });
-        if (result.previewUrl) {
-          console.log(`[MAIL PREVIEW] ${result.previewUrl}`);
+        previewUrl = result.previewUrl || null;
+        if (previewUrl) {
+          console.log(`[MAIL PREVIEW] ${previewUrl}`);
         }
       } catch (mailErr) {
         console.warn("transporter.sendMail failed or timed out:", mailErr && mailErr.message ? mailErr.message : mailErr);
@@ -169,11 +172,21 @@ router.post("/send-code", async (req, res) => {
 
     console.log("[auth/send-code] responding to client for:", email);
 
-    return res.json({
+    const response = {
       message: transporter
         ? "Verification code sent to your email."
         : "Verification code generated. Check server logs in development.",
-    });
+    };
+
+    if (previewUrl) {
+      response.previewUrl = previewUrl;
+    }
+
+    if (!isProduction) {
+      response.verificationCode = code;
+    }
+
+    return res.json(response);
   } catch (error) {
     console.error("send-code error:", error && error.message ? error.message : error);
     return res.status(500).json({ message: "Failed to send verification code.", error: String(error) });

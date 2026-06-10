@@ -14,6 +14,16 @@ function readStoredUser() {
   }
 }
 
+function formatVerificationMessage(data, fallbackMessage) {
+  const parts = [
+    data?.message || fallbackMessage,
+    data?.previewUrl ? `Preview: ${data.previewUrl}` : "",
+    data?.verificationCode ? `Dev code: ${data.verificationCode}` : "",
+  ];
+
+  return parts.filter(Boolean).join(" ");
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(readStoredUser);
   const [pendingEmail, setPendingEmail] = useState(readStoredUser()?.email || "");
@@ -28,7 +38,7 @@ export function AuthProvider({ children }) {
     const normalized = String(email || "").trim().toLowerCase();
     const res = await sendVerificationCode(normalized);
     setPendingEmail(normalized);
-    setStatusMessage(res.data?.message || "Verification code sent.");
+    setStatusMessage(formatVerificationMessage(res.data, "Verification code sent."));
     return res.data;
   };
 

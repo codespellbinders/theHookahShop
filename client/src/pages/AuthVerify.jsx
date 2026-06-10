@@ -1,16 +1,21 @@
 import { useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import { verifyCode, sendVerificationCode } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
 function AuthVerify() {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const emailParam = searchParams.get("email") || "";
   const [email, setEmail] = useState(emailParam);
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(() => {
+    const delivery = location.state || {};
+    const parts = [delivery.message, delivery.previewUrl ? `Preview: ${delivery.previewUrl}` : "", delivery.verificationCode ? `Dev code: ${delivery.verificationCode}` : ""];
+    return parts.filter(Boolean).join(" ");
+  });
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -23,8 +28,13 @@ function AuthVerify() {
     try {
       setSending(true);
       setMessage("");
-      await sendVerificationCode(email);
-      setMessage("✓ Code sent! Check your email or server logs. (In dev mode, check terminal where server is running)");
+      const res = await sendVerificationCode(email);
+      const parts = [
+        res.data?.message || "✓ Code sent! Check your email or server logs.",
+        res.data?.previewUrl ? `Preview: ${res.data.previewUrl}` : "",
+        res.data?.verificationCode ? `Dev code: ${res.data.verificationCode}` : "",
+      ];
+      setMessage(parts.filter(Boolean).join(" "));
     } catch (err) {
       setMessage(err?.response?.data?.message || "Failed to send code");
     } finally {

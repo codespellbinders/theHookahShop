@@ -26,8 +26,13 @@ function Profile() {
 
     try {
       setLoading(true);
-      await requestVerificationCode(email);
-      setLocalMessage("Verification code sent to your email.");
+      const res = await requestVerificationCode(email);
+      const parts = [
+        res?.message || "Verification code sent to your email.",
+        res?.previewUrl ? `Preview: ${res.previewUrl}` : "",
+        res?.verificationCode ? `Dev code: ${res.verificationCode}` : "",
+      ];
+      setLocalMessage(parts.filter(Boolean).join(" "));
     } catch (error) {
       setErrorMessage(
         error.response?.data?.message || "Unable to send verification code."
