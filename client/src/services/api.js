@@ -16,7 +16,11 @@ function normalizeApiBase(value) {
     return "";
   }
 
-  return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
+  // Ensure protocol is present. If the value was provided without protocol
+  // (e.g. 'thehookahshop-production.up.railway.app'), prepend https:// so
+  // axios receives an absolute baseURL instead of a relative path.
+  const withProto = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  return withProto.endsWith("/api") ? withProto : `${withProto}/api`;
 }
 
 function getConfiguredServerBase() {
