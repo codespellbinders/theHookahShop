@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
 
     const includeInactive = String(req.query.include_inactive || "").trim() === "1";
 
-    const whereSql = includeInactive ? "" : "WHERE status = 'active'";
+    const whereSql = includeInactive ? "" : "WHERE c.status = 'active'";
 
     const [rows] = await pdb.query(
       `
