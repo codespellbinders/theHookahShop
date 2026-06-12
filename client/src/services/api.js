@@ -1,7 +1,13 @@
 import axios from "axios";
 
+const PROD_BACKEND_FALLBACK = "https://thehookahshop-production.up.railway.app";
+
 function isLocalDevHost(hostname) {
   return hostname === "localhost" || hostname === "127.0.0.1";
+}
+
+function isProductionStoreHost(hostname) {
+  return hostname === "hookahshoppakistan.store" || hostname === "www.hookahshoppakistan.store";
 }
 
 function normalizeApiBase(value) {
@@ -22,6 +28,9 @@ function getConfiguredServerBase() {
   if (isLocalDevHost(hostname)) {
     return `http://${hostname}:5000`;
   }
+  if (isProductionStoreHost(hostname)) {
+    return PROD_BACKEND_FALLBACK;
+  }
   return origin;
 }
 
@@ -33,6 +42,9 @@ const getApiBase = () => {
   const { hostname, origin } = window.location;
   if (isLocalDevHost(hostname)) {
     return `http://${hostname}:5000/api`;
+  }
+  if (isProductionStoreHost(hostname)) {
+    return `${PROD_BACKEND_FALLBACK}/api`;
   }
   return `${origin}/api`;
 };
