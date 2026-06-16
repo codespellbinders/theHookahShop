@@ -82,6 +82,7 @@ function normalizeProduct(raw) {
     stockQty: toNumber(raw?.stock_qty, 0),
     status: String(raw?.status || "draft"),
     imageUrl: raw?.image_url || "",
+    youtubeVideoUrl: raw?.youtube_video_url || "",
     categoryId: toNumber(raw?.category_id, 0),
     category: String(raw?.category_slug || ""),
     categoryName: String(raw?.category_name || ""),

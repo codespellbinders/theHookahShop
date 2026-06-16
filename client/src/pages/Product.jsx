@@ -4,6 +4,35 @@ import "./productPage.css";
 import { useCart } from "../context/CartContext";
 import { fetchProductById, resolveImageUrl } from "../services/api";
 
+function getYouTubeEmbedUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  try {
+    const url = new URL(raw);
+    const host = url.hostname.replace(/^www\./, "");
+
+    if (host === "youtu.be") {
+      const videoId = url.pathname.split("/").filter(Boolean)[0];
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : "";
+    }
+
+    if (host === "youtube.com" || host === "m.youtube.com") {
+      const videoId = url.searchParams.get("v");
+      if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+
+      const parts = url.pathname.split("/").filter(Boolean);
+      if (parts[0] === "embed" && parts[1]) {
+        return `https://www.youtube.com/embed/${parts[1]}`;
+      }
+    }
+  } catch {
+    return "";
+  }
+
+  return "";
+}
+
 function Product() {
   const { id } = useParams();
   const location = useLocation();
@@ -42,6 +71,8 @@ function Product() {
     return <h2 style={{ color: "white", padding: "150px" }}>Product not found</h2>;
   }
 
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(product.youtubeVideoUrl);
+
   return (
     <section className="product-page">
       <div className="product-container">
@@ -76,6 +107,21 @@ function Product() {
           <p className="product-description">
             {product.description || "Premium luxury hookah designed for ultimate performance and style."}
           </p>
+
+          {youtubeEmbedUrl ? (
+            <div className="product-video-section">
+              <h3>Watch Product Video</h3>
+              <div className="product-video-frame">
+                <iframe
+                  src={youtubeEmbedUrl}
+                  title={`${product.name} product video`}
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          ) : null}
 
           <div className="product-actions">
 

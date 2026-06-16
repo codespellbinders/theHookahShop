@@ -25,6 +25,7 @@ const INITIAL_PRODUCT_FORM = {
   stock_qty: "0",
   status: "draft",
   image_url: "",
+  youtube_video_url: "",
   category_id: "",
 };
 
@@ -182,6 +183,9 @@ function AdminProducts() {
       );
       payload.append("stock_qty", String(Number(productForm.stock_qty)));
       payload.append("category_id", String(Number(productForm.category_id)));
+      if (productForm.youtube_video_url.trim()) {
+        payload.append("youtube_video_url", productForm.youtube_video_url.trim());
+      }
 
       if (selectedImageFile) {
         payload.append("image", selectedImageFile);
@@ -223,6 +227,7 @@ function AdminProducts() {
       stock_qty: String(product.stockQty || 0),
       status: product.status || "draft",
       image_url: product.imageUrl || "",
+      youtube_video_url: product.youtubeVideoUrl || "",
       category_id: String(product.categoryId || ""),
     });
   };
@@ -477,6 +482,17 @@ function AdminProducts() {
                   />
                 </div>
               </div>
+
+              <label>YouTube Video URL</label>
+              <input
+                name="youtube_video_url"
+                value={productForm.youtube_video_url}
+                onChange={handleProductInput}
+                placeholder="https://www.youtube.com/watch?v=..."
+              />
+              <small className="admin-muted">
+                Paste a YouTube watch link or youtu.be link. It will show on the product page.
+              </small>
 
               {imagePreviewUrl ? (
                 <div>

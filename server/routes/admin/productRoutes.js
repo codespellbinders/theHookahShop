@@ -101,6 +101,7 @@ function normalizeProductInput(body, file) {
     status: String((body && body.status) || "draft").trim().toLowerCase(),
     imageUrl:
       uploadedImageUrl || (body && body.image_url ? String(body.image_url).trim() : null),
+    youtubeVideoUrl: body && body.youtube_video_url ? String(body.youtube_video_url).trim() : null,
     categoryId: body && body.category_id !== undefined ? Number(body.category_id) : NaN,
   };
 }
@@ -167,6 +168,7 @@ router.get(
           p.stock_qty,
           p.status,
           p.image_url,
+          p.youtube_video_url,
           p.category_id,
           c.name AS category_name,
           p.created_at,
@@ -215,6 +217,7 @@ router.get(
           p.stock_qty,
           p.status,
           p.image_url,
+          p.youtube_video_url,
           p.category_id,
           c.name AS category_name,
           p.created_at,
@@ -269,9 +272,9 @@ router.post(
       const [result] = await pdb.query(
         `
         INSERT INTO products
-          (name, slug, description, price, sale_price, sku, stock_qty, status, image_url, category_id, created_by, updated_by)
+          (name, slug, description, price, sale_price, sku, stock_qty, status, image_url, youtube_video_url, category_id, created_by, updated_by)
         VALUES
-          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
           input.name,
@@ -283,6 +286,7 @@ router.post(
           input.stockQty,
           input.status,
           input.imageUrl,
+          input.youtubeVideoUrl,
           input.categoryId,
           req.admin.adminId,
           req.admin.adminId,
@@ -360,6 +364,7 @@ router.put(
           stock_qty = ?,
           status = ?,
           image_url = ?,
+          youtube_video_url = ?,
           category_id = ?,
           updated_by = ?
         WHERE id = ?
@@ -374,6 +379,7 @@ router.put(
           input.stockQty,
           input.status,
           input.imageUrl,
+          input.youtubeVideoUrl,
           input.categoryId,
           req.admin.adminId,
           productId,
