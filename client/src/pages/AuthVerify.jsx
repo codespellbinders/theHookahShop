@@ -21,7 +21,7 @@ function AuthVerify() {
     return parts.filter(Boolean).join(" ");
   });
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { confirmVerificationCode, requestVerificationCode } = useAuth();
 
   const sendCode = async (e) => {
     e.preventDefault();
@@ -34,16 +34,16 @@ function AuthVerify() {
       setSending(true);
       setMessage("");
       setMessageType("");
-      const res = await sendVerificationCode(email);
+      const data = await requestVerificationCode(email);
       const parts = [
-        res.data?.message || "✓ Code sent! Check your email or server logs.",
-        res.data?.previewUrl ? `Preview: ${res.data.previewUrl}` : "",
-        res.data?.verificationCode ? `Dev code: ${res.data.verificationCode}` : "",
+        data?.message || "✓ Code sent! Check your email or server logs.",
+        data?.previewUrl ? `Preview: ${data.previewUrl}` : "",
+        data?.verificationCode ? `Dev code: ${data.verificationCode}` : "",
       ];
       setMessage(parts.filter(Boolean).join(" "));
-      setMessageType(res.data?.deliveryMode === "test" ? "info" : "success");
+      setMessageType(data?.deliveryMode === "test" ? "info" : "success");
     } catch (err) {
-      setMessage(err?.response?.data?.message || "Failed to send code");
+      setMessage(err?.response?.data?.message || err?.message || "Failed to send code");
       setMessageType("error");
     } finally {
       setSending(false);
@@ -54,12 +54,10 @@ function AuthVerify() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await verifyCode(email, code);
-      const user = res.data.user;
-      login(user);
+      await confirmVerificationCode(email, code);
       navigate("/");
     } catch (err) {
-      alert(err?.response?.data?.message || "Verification failed");
+      alert(err?.response?.data?.message || err?.message || "Verification failed");
     } finally {
       setLoading(false);
     }
