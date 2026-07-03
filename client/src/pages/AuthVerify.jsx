@@ -11,6 +11,10 @@ function AuthVerify() {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
+  const [messageType, setMessageType] = useState(() => {
+    const delivery = location.state || {};
+    return delivery.previewUrl || delivery.deliveryMode === "test" ? "info" : delivery.message ? "success" : "";
+  });
   const [message, setMessage] = useState(() => {
     const delivery = location.state || {};
     const parts = [delivery.message, delivery.previewUrl ? `Preview: ${delivery.previewUrl}` : "", delivery.verificationCode ? `Dev code: ${delivery.verificationCode}` : ""];
@@ -23,11 +27,13 @@ function AuthVerify() {
     e.preventDefault();
     if (!email) {
       setMessage("Please enter your email first");
+      setMessageType("error");
       return;
     }
     try {
       setSending(true);
       setMessage("");
+      setMessageType("");
       const res = await sendVerificationCode(email);
       const parts = [
         res.data?.message || "✓ Code sent! Check your email or server logs.",
@@ -35,8 +41,10 @@ function AuthVerify() {
         res.data?.verificationCode ? `Dev code: ${res.data.verificationCode}` : "",
       ];
       setMessage(parts.filter(Boolean).join(" "));
+      setMessageType(res.data?.deliveryMode === "test" ? "info" : "success");
     } catch (err) {
       setMessage(err?.response?.data?.message || "Failed to send code");
+      setMessageType("error");
     } finally {
       setSending(false);
     }
@@ -79,7 +87,12 @@ function AuthVerify() {
         </button>
         
         {message && (
-          <p style={{ margin: "12px 0", color: message.includes("✓") ? "#7ded99" : "#ff7d7d" }}>
+          <p
+            style={{
+              margin: "12px 0",
+              color: messageType === "success" ? "#7ded99" : messageType === "info" ? "#ffd36a" : "#ff7d7d",
+            }}
+          >
             {message}
           </p>
         )}

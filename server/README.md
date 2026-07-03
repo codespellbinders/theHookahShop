@@ -7,6 +7,14 @@ DB_USER=root
 DB_PASS=your_mysql_password
 DB_NAME=hookahshop
 
+# Optional Cloudinary settings for persistent product image uploads
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# Optional local fallback for development only
+# When Cloudinary is not configured, images are stored under server/uploads/products.
+
 # Optional SMTP settings for real email delivery
 SMTP_HOST=smtp.example.com
 SMTP_PORT=587
@@ -38,21 +46,32 @@ node server.js
 - Use an app password or provider-issued SMTP credentials rather than your normal account password.
 - Keep `CODE_HASH_SECRET` long and random so stored verification codes cannot be replayed.
 
-5. To fully enable persistence and orders, configure MySQL credentials and create the database `hookahshop`.
+5. To keep admin product images after redeploys, configure Cloudinary for uploads:
+
+```env
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
+
+- In production, product image uploads require Cloudinary.
+- In development, the server can still fall back to local files under `server/uploads/products`.
+
+6. To fully enable persistence and orders, configure MySQL credentials and create the database `hookahshop`.
 
 ```sql
 CREATE DATABASE hookahshop;
 -- create a user and grant privileges as appropriate
 ```
 
-6. Run DB migrations (required for admin/product management):
+7. Run DB migrations (required for admin/product management):
 
 ```bash
 cd server
 npm run migrate
 ```
 
-7. Configure admin auth envs in `.env`:
+8. Configure admin auth envs in `.env`:
 
 ```env
 ADMIN_JWT_SECRET=replace_with_a_long_random_secret
@@ -61,7 +80,7 @@ ADMIN_JWT_EXPIRES_IN=12h
 ADMIN_SETUP_KEY=replace_with_setup_key
 ```
 
-8. Bootstrap first super admin (run once):
+9. Bootstrap first super admin (run once):
 
 ```bash
 curl -X POST http://localhost:5000/api/admin/auth/bootstrap-super-admin \
@@ -70,7 +89,7 @@ curl -X POST http://localhost:5000/api/admin/auth/bootstrap-super-admin \
 	-d '{"name":"Owner","email":"owner@example.com","password":"Admin@12345"}'
 ```
 
-9. Phase 1 admin endpoints:
+10. Phase 1 admin endpoints:
 
 - `POST /api/admin/auth/login`
 - `GET /api/admin/auth/me`
@@ -84,7 +103,7 @@ curl -X POST http://localhost:5000/api/admin/auth/bootstrap-super-admin \
 
 Use `Authorization: Bearer <token>` for all `/api/admin/categories` and `/api/admin/products` routes.
 
-10. Public catalog endpoints (used by storefront):
+11. Public catalog endpoints (used by storefront):
 
 - `GET /api/categories`
 - `GET /api/products`

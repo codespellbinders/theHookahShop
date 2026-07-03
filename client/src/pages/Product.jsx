@@ -5,8 +5,16 @@ import { useCart } from "../context/CartContext";
 import { fetchProductById, resolveImageUrl } from "../services/api";
 
 function getYouTubeEmbedUrl(value) {
-  const raw = String(value || "").trim();
+  let raw = String(value || "").trim();
   if (!raw) return "";
+
+  if (/^[a-zA-Z0-9_-]{11}$/.test(raw)) {
+    return `https://www.youtube.com/embed/${raw}`;
+  }
+
+  if (!/^https?:\/\//i.test(raw)) {
+    raw = "https://" + raw;
+  }
 
   try {
     const url = new URL(raw);
@@ -23,6 +31,12 @@ function getYouTubeEmbedUrl(value) {
 
       const parts = url.pathname.split("/").filter(Boolean);
       if (parts[0] === "embed" && parts[1]) {
+        return `https://www.youtube.com/embed/${parts[1]}`;
+      }
+      if (parts[0] === "shorts" && parts[1]) {
+        return `https://www.youtube.com/embed/${parts[1]}`;
+      }
+      if (parts[0] === "v" && parts[1]) {
         return `https://www.youtube.com/embed/${parts[1]}`;
       }
     }

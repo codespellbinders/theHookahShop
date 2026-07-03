@@ -1,0 +1,75 @@
+.product-slider-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.product-slider-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 45px;
+}
+
+.product-slider-controls {
+  display: none; /* Hidden on desktop */
+}
+
+@media (max-width: 768px) {
+  .product-slider-container {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 20px;
+    padding: 10px 0;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+
+  .product-slider-container::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Opera */
+  }
+
+  /* Each product link/card inside the slider snaps to center */
+  .product-slider-container > a {
+    flex: 0 0 78%; /* Peek-ahead effect */
+    scroll-snap-align: center;
+  }
+
+  .product-slider-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    margin-top: 24px;
+    color: #fff;
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+  }
+
+  .product-slider-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+  }
+
+  .product-slider-btn:hover {
+    color: #c9a227;
+  }
+
+  .product-slider-btn:disabled {
+    color: #444;
+    cursor: not-allowed;
+  }
+
+  .product-slider-fraction {
+    letter-spacing: 2px;
+    font-weight: 500;
+  }
+}

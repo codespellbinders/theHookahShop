@@ -119,6 +119,7 @@ router.post("/send-code", async (req, res) => {
   await ensureTablesOnce(); // Ensure tables before handling request
   const email = String((req.body && req.body.email) || "").trim().toLowerCase();
   const isProduction = process.env.NODE_ENV === "production";
+  const hasSmtpConfig = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
 
   if (!email) {
     return res.status(400).json({ message: "Email is required." });
@@ -167,16 +168,23 @@ router.post("/send-code", async (req, res) => {
         console.log(`[DEV EMAIL-FALLBACK] Verification code for ${email}: ${code}`);
       }
     } else {
+      if (isProduction) {
+        return res.status(503).json({
+          message: "Email delivery is not configured on this server.",
+        });
+      }
       console.log(`[DEV EMAIL] Verification code for ${email}: ${code}`);
     }
 
     console.log("[auth/send-code] responding to client for:", email);
 
     const response = {
-      message: transporter
+      message: hasSmtpConfig
         ? "Verification code sent to your email."
-        : "Verification code generated. Check server logs in development.",
+        : "Verification code sent to a test inbox. Check the preview link below.",
     };
+
+    response.deliveryMode = hasSmtpConfig ? "smtp" : "test";
 
     if (previewUrl) {
       response.previewUrl = previewUrl;

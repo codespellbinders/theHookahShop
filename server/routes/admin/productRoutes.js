@@ -3,26 +3,20 @@ const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
 const db = require("../../db");
+const { hasCloudinaryConfig, uploadImageBuffer } = require("../../lib/cloudinary");
 const { authenticateAdmin } = require("../../middleware/adminAuth");
 const { requirePermission } = require("../../middleware/rbac");
 
 const router = express.Router();
 
 const uploadDir = path.join(__dirname, "..", "..", "uploads", "products");
-fs.mkdirSync(uploadDir, { recursive: true });
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadDir),
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname || "").toLowerCase();
-    const safeExt = ext || ".jpg";
-    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${safeExt}`;
-    cb(null, uniqueName);
-  },
-});
+function ensureLocalUploadDir() {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
@@ -86,8 +80,36 @@ async function buildUniqueProductSlug(pdb, baseSlug, productIdToExclude) {
   }
 }
 
-function normalizeProductInput(body, file) {
-  const uploadedImageUrl = file ? `/uploads/products/${file.filename}` : null;
+function buildLocalImageUrl(fileName) {
+  return `/uploads/products/${fileName}`;
+}
+
+async function persistProductImage(file) {
+  if (!file) return null;
+
+  if (hasCloudinaryConfig()) {
+    const result = await uploadImageBuffer(file.buffer, file.originalname);
+    if (!result || !result.secure_url) {
+      throw new Error("Cloudinary did not return an image URL.");
+    }
+    return result.secure_url;
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Cloudinary is required in production for product image uploads.");
+  }
+
+  ensureLocalUploadDir();
+  const ext = path.extname(file.originalname || "").toLowerCase();
+  const safeExt = ext || ".jpg";
+  const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${safeExt}`;
+  const targetPath = path.join(uploadDir, uniqueName);
+  await fs.promises.writeFile(targetPath, file.buffer);
+  return buildLocalImageUrl(uniqueName);
+}
+
+async function normalizeProductInput(body, file) {
+  const uploadedImageUrl = file ? await persistProductImage(file) : null;
   return {
     name: String((body && body.name) || "").trim(),
     description: body && body.description ? String(body.description).trim() : null,
@@ -247,7 +269,7 @@ router.post(
   requirePermission("products.create"),
   uploadProductImage,
   async (req, res) => {
-    const input = normalizeProductInput(req.body, req.file);
+    const input = await normalizeProductInput(req.body, req.file);
     const validationError = validateProductInput(input);
     if (validationError) {
       return res.status(400).json({ message: validationError });
@@ -321,7 +343,7 @@ router.put(
       return res.status(400).json({ message: "Invalid product id." });
     }
 
-    const input = normalizeProductInput(req.body, req.file);
+    const input = await normalizeProductInput(req.body, req.file);
     const validationError = validateProductInput(input);
     if (validationError) {
       return res.status(400).json({ message: validationError });

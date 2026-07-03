@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "../components/product/ProductCard";
+import ProductSlider from "../components/product/ProductSlider";
 import Hero from "../components/layout/Hero";
 import { fetchCategories, fetchProducts } from "../services/api";
 
@@ -50,11 +51,7 @@ function Home() {
         <div className="products-container">
           <h2 className="products-title">{category.name.toUpperCase()}</h2>
 
-          <div className="products-grid">
-            {filtered.slice(0, 4).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <ProductSlider products={filtered} />
 
           <div style={{ textAlign: "center", marginTop: "40px" }}>
             <Link to={`/category/${category.slug}`}>

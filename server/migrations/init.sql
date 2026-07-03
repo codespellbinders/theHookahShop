@@ -24,5 +24,6 @@ CREATE TABLE IF NOT EXISTS orders (
   payment_method VARCHAR(50),
   payment_proof VARCHAR(255),
   status VARCHAR(50) DEFAULT 'Pending',
+  youtube_video_url VARCHAR(255) NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
