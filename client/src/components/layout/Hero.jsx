@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import heroHookahVideo from "../../assets/herohookah.mp4";
 
 function Hero() {
@@ -46,7 +47,9 @@ function Hero() {
         </p>
 
         <div style={{ marginTop: "30px" }}>
-          <button className="gold-btn">SHOP NOW</button>
+          <Link to="/products">
+            <button className="gold-btn">SHOP NOW</button>
+          </Link>
         </div>
       </div>
     </section>
