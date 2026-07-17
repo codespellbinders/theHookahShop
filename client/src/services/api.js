@@ -134,6 +134,16 @@ export function resolveImageUrl(value) {
   return `${getServerBase()}/${raw}`;
 }
 
+export function optimizeCloudinaryUrl(url, width) {
+  if (!url) return "";
+  if (url.includes("cloudinary.com") && url.includes("/upload/")) {
+    if (!url.includes("/upload/f_auto,q_auto,w_")) {
+      return url.replace("/upload/", `/upload/f_auto,q_auto,w_${width}/`);
+    }
+  }
+  return url;
+}
+
 export function sendVerificationCode(email) {
   return api.post("/auth/send-code", { email });
 }

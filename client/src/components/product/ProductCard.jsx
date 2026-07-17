@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import "./productCard.css";
-import { resolveImageUrl } from "../../services/api";
+import { resolveImageUrl, optimizeCloudinaryUrl } from "../../services/api";
 
 function ProductCard({ product }) {
   return (
@@ -8,7 +8,7 @@ function ProductCard({ product }) {
       <div className="product-card">
         <div className="product-image-wrapper">
           {product.imageUrl ? (
-            <img src={resolveImageUrl(product.imageUrl)} alt={product.name} loading="lazy" />
+            <img src={optimizeCloudinaryUrl(resolveImageUrl(product.imageUrl), 400)} alt={product.name} loading="lazy" />
           ) : (
             <div className="image-placeholder">{product.name}</div>
           )}

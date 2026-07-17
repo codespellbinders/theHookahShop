@@ -12,6 +12,7 @@ import {
   fetchAdminProducts,
   getAdminToken,
   resolveImageUrl,
+  optimizeCloudinaryUrl,
   updateAdminProduct,
 } from "../../services/api";
 import "./admin.css";
@@ -498,8 +499,9 @@ function AdminProducts() {
                 <div>
                   <label>Image Preview</label>
                   <img
-                    src={imagePreviewUrl}
+                    src={optimizeCloudinaryUrl(imagePreviewUrl, 400)}
                     alt="Product preview"
+                    loading="lazy"
                     style={{ width: "120px", height: "120px", objectFit: "cover", borderRadius: "8px" }}
                   />
                 </div>

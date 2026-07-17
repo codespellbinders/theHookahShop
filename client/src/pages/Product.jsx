@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import "./productPage.css";
 import { useCart } from "../context/CartContext";
-import { fetchProductById, resolveImageUrl } from "../services/api";
+import { fetchProductById, resolveImageUrl, optimizeCloudinaryUrl } from "../services/api";
 
 function getYouTubeEmbedUrl(value) {
   let raw = String(value || "").trim();
@@ -94,7 +94,7 @@ function Product() {
         <div className="product-image">
           {product.imageUrl ? (
             <div className="image-frame">
-              <img src={resolveImageUrl(product.imageUrl)} alt={product.name} />
+              <img src={optimizeCloudinaryUrl(resolveImageUrl(product.imageUrl), 900)} alt={product.name} loading="lazy" />
             </div>
           ) : (
             <div className="image-placeholder">{product.name}</div>
