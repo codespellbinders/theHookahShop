@@ -5,8 +5,10 @@
   position: sticky;
   top: 0;
   z-index: 999;
-  background: #000; /* force solid black */
-  border-bottom: 1px solid #111;
+  background: rgba(11, 11, 12, 0.85); /* var(--bg-primary) transparency */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 /* =========================
@@ -17,7 +19,7 @@
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 24px;
-  padding: 28px 50px 20px;
+  padding: 34px 50px 24px;
 }
 
 .nav-right {
@@ -36,7 +38,7 @@
 }
 
 .nav-brand img {
-  height: 72px;
+  height: 80px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -89,7 +91,7 @@
    LOGO
 ========================= */
 .nav-logo img {
-  height: 90px;
+  height: 100px;
   object-fit: contain;
   display: block;
 }
@@ -153,22 +155,18 @@
 .nav-link::after {
   content: "";
   position: absolute;
-  left: 50%;
-  bottom: 0;
-  height: 1.5px;
+  bottom: -6px;
+  left: 0;
   width: 0%;
-  background: #fff;
-  transition: all 0.35s ease;
-  transform: translateX(-50%);
+  height: 2px;
+  background: var(--gold-primary);
+  transition: 0.3s ease;
 }
 
 .navbar-menu a:hover::after,
-.nav-link:hover::after {
-  width: 100%;
-}
-
-/* Active link */
-.navbar-menu a.active::after {
+.nav-link:hover::after,
+.navbar-menu a.active::after,
+.nav-link.active::after {
   width: 100%;
 }
 
