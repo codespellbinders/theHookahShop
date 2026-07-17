@@ -8,7 +8,7 @@ import {
 } from "react-icons/hi";
 import logo from "../../assets/logo.png";
 import "./Navbar.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import { fetchCategories } from "../../services/api";
@@ -129,9 +129,12 @@ function Navbar() {
       ) : null}
 
       <nav className="navbar-menu">
-        <Link to="/" className="active">
+        <NavLink to="/">
           HOME
-        </Link>
+        </NavLink>
+        <NavLink to="/about">
+          ABOUT US
+        </NavLink>
 
         {parentCategories.map((category) => {
           const children = childCategoriesByParent.get(String(category.id)) || [];
@@ -144,10 +147,10 @@ function Navbar() {
                 onMouseEnter={() => setDropdown(String(category.id))}
                 onMouseLeave={() => setDropdown(null)}
               >
-                <Link to={`/category/${category.slug}`} className="nav-link">
+                <NavLink to={`/category/${category.slug}`} className="nav-link">
                   {String(category.name || "").toUpperCase()}
                   <i className="arrow"></i>
-                </Link>
+                </NavLink>
 
                 {dropdown === String(category.id) ? (
                   <div className="dropdown-menu">
@@ -163,9 +166,9 @@ function Navbar() {
           }
 
           return (
-            <Link key={category.id} to={`/category/${category.slug}`}>
+            <NavLink key={category.id} to={`/category/${category.slug}`}>
               {String(category.name || "").toUpperCase()}
-            </Link>
+            </NavLink>
           );
         })}
       </nav>
@@ -174,6 +177,9 @@ function Navbar() {
         <div className="navbar-menu-mobile container">
           <Link to="/" className="mobile-link" onClick={() => setMobileMenu(false)}>
             HOME
+          </Link>
+          <Link to="/about" className="mobile-link" onClick={() => setMobileMenu(false)}>
+            ABOUT US
           </Link>
 
           {parentCategories.map((category) => {

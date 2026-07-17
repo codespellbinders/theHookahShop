@@ -69,6 +69,7 @@ function Footer() {
           <ul className="footer-links-list">
             <li><Link to="/" onClick={scrollToTop}>Home</Link></li>
             <li><Link to="/products" onClick={scrollToTop}>All Products</Link></li>
+            <li><Link to="/about" onClick={scrollToTop}>About Us</Link></li>
             <li><Link to="/category/hookahs" onClick={scrollToTop}>Hookahs</Link></li>
             <li><Link to="/category/bowl" onClick={scrollToTop}>Bowls</Link></li>
             <li><Link to="/category/accessories" onClick={scrollToTop}>Accessories</Link></li>

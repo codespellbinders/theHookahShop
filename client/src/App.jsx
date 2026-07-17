@@ -4,6 +4,7 @@ import Navbar from "./components/layout/Navbar";
 import Category from "./pages/Category";
 import Product from "./pages/Product"; // ✅ DETAIL PAGE
 import Products from "./pages/Products"; // ✅ ALL PRODUCTS PAGE
+import About from "./pages/About";
 import Checkout from "./pages/Checkout";
 import CartDrawer from "./components/cart/CartDrawer";
 import AuthLogin from "./pages/AuthLogin";
@@ -59,6 +60,7 @@ function App() {
         <Route path="/auth/login" element={<AuthLogin />} />
         <Route path="/auth/signup" element={<AuthSignup />} />
         <Route path="/auth/verify" element={<AuthVerify />} />
+        <Route path="/about" element={<About />} />
         <Route path="/admin/*" element={<Navigate to="/admin/login" replace />} />
       </Routes>
       <Footer />

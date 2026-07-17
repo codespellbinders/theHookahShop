@@ -1,0 +1,228 @@
+/* About Page Premium Dark Theme Styling */
+.about-page {
+  background-color: #000000;
+  color: #ffffff;
+  padding: 80px 20px;
+  font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify_content: center;
+}
+
+.about-container {
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  animation: aboutFadeIn 0.8s ease-out;
+}
+
+@keyframes aboutFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Page Header */
+.about-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.about-header h1 {
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* Sections & Dividers */
+.about-section {
+  margin-bottom: 80px;
+}
+
+.about-divider {
+  height: 1px;
+  background-color: #222222;
+  border: none;
+  margin: 60px 0;
+}
+
+/* Headings and Paragraphs */
+.about-section h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #d4af37; /* Premium Gold Accent */
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.about-section p {
+  font-size: 17px;
+  line-height: 1.8;
+  color: #cccccc;
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+
+/* Services 2-Column Grid */
+.about-services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px 30px;
+  margin: 25px 0;
+}
+
+.about-service-item {
+  display: flex;
+  align-items: center;
+  font-size: 17px;
+  color: #cccccc;
+  line-height: 1.8;
+}
+
+.about-service-icon {
+  color: #d4af37;
+  font-size: 18px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+/* Address Card Section */
+.about-address-card {
+  background-color: #111111;
+  border: 1px solid #333333;
+  padding: 25px;
+  border-radius: 10px;
+  margin: 25px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.3s ease;
+}
+
+.about-address-card:hover {
+  border-color: #d4af37;
+}
+
+.about-address-text {
+  font-size: 18px !important;
+  color: #ffffff !important;
+  margin: 0 !important;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+.about-address-icon {
+  margin-right: 12px;
+  font-size: 22px;
+}
+
+/* Delivery Highlight items */
+.about-delivery-highlights {
+  margin: 25px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.about-delivery-item {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.about-delivery-emoji {
+  font-size: 24px;
+  margin-right: 12px;
+  display: inline-block;
+  line-height: 1;
+}
+
+/* Payment Policy Box */
+.about-payment-box {
+  background: linear-gradient(135deg, #111111 0%, #151515 100%);
+  border-left: 3px solid #d4af37;
+  padding: 25px;
+  border-radius: 4px;
+  margin-top: 25px;
+}
+
+.about-payment-note {
+  margin-bottom: 20px !important;
+  font-style: italic;
+  color: #aaaaaa !important;
+}
+
+.about-payment-item {
+  font-size: 17px;
+  color: #ffffff;
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+
+.about-payment-item:last-child {
+  margin-bottom: 0;
+}
+
+.about-payment-item strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .about-page {
+    padding: 60px 16px;
+  }
+
+  .about-header h1 {
+    font-size: 30px;
+  }
+
+  .about-section {
+    margin-bottom: 60px;
+  }
+
+  .about-section h2 {
+    font-size: 24px;
+  }
+
+  .about-section p {
+    font-size: 16px;
+  }
+
+  .about-services-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .about-address-card {
+    padding: 20px;
+  }
+
+  .about-address-text {
+    font-size: 16px !important;
+  }
+
+  .about-delivery-item {
+    font-size: 16px;
+  }
+
+  .about-delivery-emoji {
+    font-size: 22px;
+  }
+
+  .about-payment-box {
+    padding: 20px;
+  }
+}
