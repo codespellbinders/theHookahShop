@@ -3,52 +3,30 @@ import heroHookahVideo from "../../assets/herohookah.mp4";
 
 function Hero() {
   return (
-    <section
-      style={{
-        height: "90vh",
-        position: "relative",
-        overflow: "hidden",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center"
-      }}
-    >
+    <section className="hero-section">
       <video
         autoPlay
         muted
         loop
         playsInline
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: "cover"
-        }}
+        className="hero-video"
       >
         <source src={heroHookahVideo} type="video/mp4" />
       </video>
 
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: "rgba(0,0,0,0.6)"
-        }}
-      />
+      <div className="hero-overlay" />
 
-      <div style={{ position: "relative", zIndex: 1 }}>
-        <h1 style={{ fontSize: "48px" }}>
+      <div className="hero-content">
+        <h1 className="hero-title">
           UNWIND IN STYLE
         </h1>
-        <p style={{ marginTop: "20px", color: "#ccc" }}>
+        <p className="hero-description">
           Discover premium hookahs & accessories
         </p>
 
-        <div style={{ marginTop: "30px" }}>
+        <div className="hero-actions">
           <Link to="/products">
-            <button className="gold-btn">SHOP NOW</button>
+            <button className="hero-cta-btn">SHOP NOW</button>
           </Link>
         </div>
       </div>

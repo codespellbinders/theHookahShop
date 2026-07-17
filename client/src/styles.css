@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
 
 :root {
   --bg-primary: #0b0b0c;
@@ -329,4 +329,122 @@ h1, h2, h3 {
 @media (max-width: 600px) {
   .whatsapp-float { bottom: 14px; left: 14px; }
   .wa-btn { width: 48px; height: 48px; }
+}
+
+/* =========================
+   CINEMATIC HERO SECTION
+========================= */
+.hero-section {
+  height: 90vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.45) 50%, rgba(0, 0, 0, 0.95) 100%);
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  padding: 0 20px;
+  animation: heroFadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hero-title {
+  font-family: 'Playfair Display', 'Cormorant Garamond', serif;
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ffffff;
+  margin: 0 auto 20px;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 15px;
+}
+
+/* Subtle gold underline below title */
+.hero-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 2px;
+  background: var(--gold-primary);
+}
+
+.hero-description {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #cccccc;
+  letter-spacing: 1px;
+}
+
+.hero-actions {
+  margin-top: 35px;
+}
+
+/* Gold border, transparent bg, hover filled with glow CTA */
+.hero-cta-btn {
+  background: transparent;
+  border: 1px solid var(--gold-primary);
+  color: var(--gold-primary);
+  padding: 14px 36px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  text-transform: uppercase;
+  box-shadow: 0 0 0 rgba(198, 167, 94, 0);
+}
+
+.hero-cta-btn:hover {
+  background: var(--gold-primary);
+  color: #000000;
+  box-shadow: 0 0 20px rgba(198, 167, 94, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Fade in upward animation */
+@keyframes heroFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustment for Hero section */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 38px;
+  }
+  .hero-description {
+    font-size: 16px;
+  }
+  .hero-section {
+    height: 80vh;
+  }
 }
