@@ -6,7 +6,8 @@
 }
 
 .product-card {
-  background: #111;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.35s ease;
@@ -17,7 +18,9 @@
 }
 
 .product-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-6px);
+  border-color: var(--gold-primary);
+  box-shadow: 0 10px 30px rgba(198, 167, 94, 0.12);
 }
 
 /* IMAGE */
@@ -60,7 +63,7 @@
 }
 
 .product-card:hover .product-image-wrapper img {
-  transform: scale(1.08);
+  transform: scale(1.05);
 }
 
 /* INFO */
@@ -75,7 +78,8 @@
 
 .product-info h3 {
   font-size: 16px;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  font-weight: 500;
   margin-top: 0;
   margin-bottom: 10px;
   line-height: 1.4;
@@ -89,7 +93,7 @@
 
 .product-price {
   font-size: 15px;
-  color: #c9a227;
+  color: var(--gold-soft);
   margin-bottom: 18px;
 }
 
@@ -101,7 +105,7 @@
 }
 
 .product-sale-price {
-  color: #c9a227;
+  color: var(--gold-soft);
   font-weight: 600;
 }
 
