@@ -1,16 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&display=swap');
+
 :root {
-  --bg-main: #0e0e0e;
-  --bg-card: #1a1a1a;
-  --gold: #c9a227;
-  --text-main: #ffffff;
-  --text-muted: #aaaaaa;
+  --bg-primary: #0b0b0c;
+  --bg-secondary: #111111;
+  --bg-card: #151518;
+  --gold-primary: #c6a75e;
+  --gold-soft: #e0c27a;
+  --text-primary: #f5f5f5;
+  --text-muted: #999999;
+  --border-subtle: #1f1f1f;
+
+  /* Backward compatibility mappings */
+  --bg-main: var(--bg-primary);
+  --gold: var(--gold-primary);
+  --text-main: var(--text-primary);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: var(--bg-main);
-  color: var(--text-main);
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Transition all 0.3s ease globally for interactive & layout components */
+body, a, button, input, select, textarea, .product-card, .card, .wa-btn, .navbar, .site-footer, .quantity-button, .remove-link {
+  transition: all 0.3s ease;
 }
 
 .container {
@@ -23,9 +44,14 @@ body {
   padding: 100px 0;
 }
 
+section {
+  padding: 100px 0;
+}
+
 h1, h2, h3 {
-  font-family: 'Cinzel', serif;
+  font-family: 'Cormorant Garamond', serif;
   letter-spacing: 1px;
+  font-weight: 600;
 }
 
 .gold-btn {
