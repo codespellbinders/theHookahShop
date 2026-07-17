@@ -5,7 +5,7 @@
   position: sticky;
   top: 0;
   z-index: 999;
-  background: rgba(11, 11, 12, 0.85); /* var(--bg-primary) transparency */
+  background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-subtle);
@@ -38,7 +38,7 @@
 }
 
 .nav-brand img {
-  height: 80px;
+  height: 84px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -91,7 +91,7 @@
    LOGO
 ========================= */
 .nav-logo img {
-  height: 100px;
+  height: 90px;
   object-fit: contain;
   display: block;
 }
@@ -151,6 +151,11 @@
 /* =========================
    PREMIUM UNDERLINE ANIMATION
 ========================= */
+.navbar-menu a,
+.nav-link {
+  position: relative;
+}
+
 .navbar-menu a::after,
 .nav-link::after {
   content: "";
@@ -165,8 +170,7 @@
 
 .navbar-menu a:hover::after,
 .nav-link:hover::after,
-.navbar-menu a.active::after,
-.nav-link.active::after {
+.navbar-menu a.active::after {
   width: 100%;
 }
 
