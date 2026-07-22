@@ -1,8 +1,9 @@
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background-color: var(--bg-primary, #0b0b0c);
-  color: var(--text-primary, #f5f5f5);
+  background-color: var(--bg-primary, #ffffff);
+  color: var(--text-primary, #111111);
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 .container {
@@ -11,23 +12,34 @@ body {
 }
 
 .gold-btn {
-  background: #c9a227;
-  color: black;
+  background-color: var(--accent-primary);
+  color: #ffffff;
   border: none;
-  padding: 10px 20px;
+  padding: 12px 30px;
+  letter-spacing: 1px;
   font-weight: bold;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.gold-btn:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(15, 61, 62, 0.25);
 }
 
 .card {
-  background: #1a1a1a;
+  background: var(--card-bg);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
   padding: 20px;
   border-radius: 10px;
+  transition: all 0.4s ease;
 }
 
 .products-section {
   padding: 120px 0;
-  background: #0e0e0e;
+  background: var(--bg-section);
 }
 
 .products-container {
@@ -38,15 +50,25 @@ body {
 
 .products-title {
   text-align: center;
-  font-size: 32px;
-  margin-bottom: 70px;
-  letter-spacing: 2px;
+  font-size: 48px;
+  margin: 60px auto 40px auto;
+  letter-spacing: 1px;
+  font-weight: 800;
+  text-transform: uppercase;
+  display: block;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px 30px;
+  background: #0f3d3e;
+  color: #ffffff;
+  border-radius: 6px;
 }
 
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 45px;
+  gap: 18px;
 }
 
 .category-section {
@@ -59,15 +81,25 @@ body {
 
 .category-section-title {
   text-align: center;
-  font-size: 28px;
-  margin: 0 0 28px;
-  letter-spacing: 2px;
+  font-size: 48px;
+  margin: 60px auto 40px auto;
+  letter-spacing: 1px;
+  font-weight: 800;
+  text-transform: uppercase;
+  display: block;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px 30px;
+  background: #0f3d3e;
+  color: #ffffff;
+  border-radius: 6px;
 }
 
 @media (max-width: 700px) {
   .products-section { padding: 64px 0; }
-  .products-title { font-size: 24px; margin-bottom: 36px; }
-  .products-grid { gap: 20px; }
+  .products-title { font-size: 30px; margin: 40px auto 28px auto; padding: 8px 18px; }
+  .products-grid { gap: 16px; }
   .category-section { margin-bottom: 48px; }
-  .category-section-title { font-size: 20px; margin-bottom: 20px; }
+  .category-section-title { font-size: 28px; margin: 40px auto 28px auto; padding: 8px 18px; }
 }

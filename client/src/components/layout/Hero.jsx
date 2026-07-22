@@ -17,11 +17,14 @@ function Hero() {
       <div className="hero-overlay" />
 
       <div className="hero-content">
+        <p className="hero-tagline">
+          Pakistan&apos;s Premium Hookah Destination
+        </p>
         <h1 className="hero-title">
-          UNWIND IN STYLE
+          Experience the Art of Hookah.
         </h1>
         <p className="hero-description">
-          Discover premium hookahs & accessories
+          Curated premium hookahs, authentic flavours, and accessories delivered across Pakistan. Trusted since 2016.
         </p>
 
         <div className="hero-actions">

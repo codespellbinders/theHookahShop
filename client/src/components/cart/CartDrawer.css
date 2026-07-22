@@ -1,12 +1,14 @@
 .cart-drawer { position: fixed; right: 18px; top: 110px; z-index: 1200; }
-.cart-toggle { background: #c9a227; border: none; padding: 10px 12px; border-radius: 6px; cursor: pointer; }
-.cart-panel { width: 320px; max-height: 70vh; overflow: auto; background: #0f0f0f; color: white; border: 1px solid #222; padding: 16px; margin-top: 12px; border-radius: 8px; }
-.cart-item { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #111; }
+.cart-toggle { background: var(--accent-primary); color: #ffffff; border: none; padding: 12px 18px; border-radius: 8px; cursor: pointer; letter-spacing: 1px; transition: all 0.3s ease; }
+.cart-toggle:hover { background: var(--accent-hover); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(15, 61, 62, 0.25); }
+.cart-panel { width: 320px; max-height: 70vh; overflow: auto; background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-subtle); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05); padding: 16px; margin-top: 12px; border-radius: 8px; }
+.cart-item { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border-subtle); }
 .ci-left { max-width: 60%; }
 .ci-right { display:flex; align-items:center; gap:8px; }
 .cart-footer { margin-top: 12px; display:flex; justify-content:space-between; align-items:center; }
-.cart-actions .primary { background: #c9a227; color: black; padding:8px 12px; border-radius:6px; text-decoration:none; }
-.cart-actions .secondary { background: transparent; border:1px solid #333; color:#fff; padding:8px 12px; border-radius:6px; cursor:pointer; }
+.cart-actions .primary { background: var(--accent-primary); color: #ffffff; padding: 10px 14px; border-radius: 6px; text-decoration:none; transition: all 0.3s ease; }
+.cart-actions .primary:hover { background: var(--accent-hover); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(15, 61, 62, 0.25); }
+.cart-actions .secondary { background: #ffffff; border:1px solid var(--border-subtle); color: var(--text-primary); padding: 10px 14px; border-radius:6px; cursor:pointer; }
 
 @media (max-width: 700px) {
 	.cart-drawer { right: 12px; top: 90px; }
