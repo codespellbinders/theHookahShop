@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import heroHookahVideo from "../../assets/herohookah.mp4";
+import heroHookahVideo from "../../assets/herohookah2.mp4";
 
 function Hero() {
   return (
