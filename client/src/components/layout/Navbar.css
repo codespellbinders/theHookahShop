@@ -5,10 +5,11 @@
   position: sticky;
   top: 0;
   z-index: 999;
-  background: rgba(0, 0, 0, 0.8);
+  background: #0f3d3e;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-subtle);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* =========================
@@ -34,7 +35,7 @@
   align-items: center;
   gap: 18px;
   text-decoration: none;
-  color: #fff;
+  color: #ffffff;
 }
 
 .nav-brand img {
@@ -56,7 +57,7 @@
 }
 
 .nav-brand-copy small {
-  color: #aaa;
+  color: rgba(255, 255, 255, 0.82);
   font-size: 11px;
   letter-spacing: 1.8px;
   text-transform: uppercase;
@@ -71,14 +72,14 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  color: #fff;
+  color: #ffffff;
   cursor: pointer;
 }
 
 /* ICONS */
 .nav-icon {
   font-size: 24px;
-  color: #fff;
+  color: #ffffff;
   cursor: pointer;
   transition: opacity 0.3s ease;
 }
@@ -108,8 +109,8 @@
   position: absolute;
   top: -6px;
   right: -8px;
-  background: #fff;
-  color: #000;
+  background: var(--accent-primary);
+  color: #ffffff;
   font-size: 11px;
   font-weight: 600;
   width: 18px;
@@ -140,38 +141,28 @@
   font-size: 14px;
   letter-spacing: 2px;
   font-weight: 500;
-  color: #fff;
+  color: #ffffff;
   text-decoration: none;
   cursor: pointer;
-  position: relative;
-  padding-bottom: 8px;
-  transition: color 0.3s ease;
+  padding: 8px 18px;
+  border-radius: 4px;
+  background: transparent;
+  transition: all 0.3s ease;
 }
 
-/* =========================
-   PREMIUM UNDERLINE ANIMATION
-========================= */
-.navbar-menu a,
-.nav-link {
-  position: relative;
+.navbar-menu a:hover,
+.nav-link:hover {
+  background: #ffffff;
+  color: #0f3d3e;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
-.navbar-menu a::after,
-.nav-link::after {
-  content: "";
-  position: absolute;
-  bottom: -6px;
-  left: 0;
-  width: 0%;
-  height: 2px;
-  background: var(--gold-primary);
-  transition: 0.3s ease;
-}
-
-.navbar-menu a:hover::after,
-.nav-link:hover::after,
-.navbar-menu a.active::after {
-  width: 100%;
+.navbar-menu a.active,
+.nav-link.active {
+  background: #ffffff;
+  color: #0f3d3e;
+  font-weight: 600;
 }
 
 /* =========================
@@ -183,7 +174,7 @@
 
 /* Arrow */
 .arrow {
-  border: solid white;
+  border: solid #ffffff;
   border-width: 0 1.5px 1.5px 0;
   display: inline-block;
   padding: 3px;
@@ -202,14 +193,15 @@
   position: absolute;
   top: 100%; /* ✅ Always directly below */
   left: 0; /* ✅ Align perfectly */
-  background: #000;
+  background: #0f3d3e;
   padding: 25px 30px;
   display: flex;
   flex-direction: column;
   gap: 18px;
   min-width: 260px;
   z-index: 1000;
-  border-top: 1px solid #111;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
 
   opacity: 0;
   visibility: hidden;
@@ -228,13 +220,19 @@
 .dropdown-menu a {
   font-size: 13px;
   letter-spacing: 1.5px;
-  color: white;
+  color: #ffffff;
   text-decoration: none;
-  transition: opacity 0.3s ease;
+  border-radius: 4px;
+  padding: 8px 12px;
+  transition: all 0.3s ease;
 }
 
 .dropdown-menu a:hover {
-  opacity: 0.7;
+  color: #0f3d3e;
+  background: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  opacity: 1;
 }
 
 /* =========================
@@ -255,11 +253,11 @@
    ANNOUNCEMENT BAR (Ticker)
 ========================= */
 .announcement-bar {
-  background: #0a0a0a;
+  background: rgba(255, 255, 255, 0.08);
   overflow: hidden;
   white-space: nowrap;
-  border-top: 1px solid #111;
-  border-bottom: 1px solid #111;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .announcement-track {
@@ -282,26 +280,34 @@
 .navbar-search-input {
   flex: 1;
   max-width: 680px;
-  background: #111;
-  color: #fff;
-  border: 1px solid #2a2a2a;
+  background: #ffffff;
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
   border-radius: 999px;
   padding: 14px 20px;
   outline: none;
 }
 
 .navbar-search-input::placeholder {
-  color: #777;
+  color: var(--text-muted);
 }
 
 .navbar-search-button {
-  border: 1px solid #c9a227;
-  background: #c9a227;
-  color: #000;
+  border: none;
+  background-color: var(--accent-primary);
+  color: #ffffff;
   border-radius: 999px;
-  padding: 14px 24px;
+  padding: 12px 30px;
+  letter-spacing: 1px;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.navbar-search-button:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(15, 61, 62, 0.25);
 }
 
 /* Smooth infinite scroll */
@@ -355,27 +361,27 @@
 
   /* Mobile menu panel */
   .navbar-menu-mobile {
-    background: #000;
+    background: #0f3d3e;
     padding: 18px 16px 26px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    border-top: 1px solid #111;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   .navbar-menu-mobile .mobile-link {
-    color: #fff;
+    color: #ffffff;
     text-decoration: none;
     font-weight: 600;
     letter-spacing: 1px;
     padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   .mobile-details summary {
     list-style: none;
     cursor: pointer;
-    color: #fff;
+    color: #ffffff;
     font-weight: 600;
     padding: 10px 0;
     outline: none;
@@ -387,6 +393,11 @@
     gap: 8px;
     padding-left: 8px;
     margin-bottom: 6px;
+  }
+
+  .mobile-sublinks a {
+    color: #ffffff;
+    text-decoration: none;
   }
 
   /* Adjust dropdown behaviour on touch devices */
