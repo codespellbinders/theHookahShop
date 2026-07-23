@@ -50,7 +50,7 @@ body {
 
 .products-title {
   text-align: center;
-  font-size: 42px;
+  font-size: 36px;
   margin: 60px auto 40px auto;
   letter-spacing: 1px;
   font-weight: 700;
@@ -59,7 +59,7 @@ body {
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
-  padding: 8px 24px;
+  padding: 6px 20px;
   background: #0f3d3e;
   color: #ffffff;
   border-radius: 6px;
