@@ -50,16 +50,16 @@ body {
 
 .products-title {
   text-align: center;
-  font-size: 36px;
-  margin: 60px auto 40px auto;
+  font-size: 30px;
+  margin: 40px auto 24px auto;
   letter-spacing: 1px;
   font-weight: 700;
   text-transform: uppercase;
-  display: block;
+  display: inline-block;
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
-  padding: 6px 20px;
+  padding: 6px 16px;
   background: #0f3d3e;
   color: #ffffff;
   border-radius: 6px;
@@ -68,7 +68,7 @@ body {
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 18px;
+  gap: 14px;
 }
 
 .category-section {
