@@ -50,13 +50,8 @@ body {
 
 .products-title {
   text-align: center;
-<<<<<<< HEAD
-  font-size: 36px;
-  margin: 60px auto 40px auto;
-=======
   font-size: 30px;
   margin: 40px auto 24px auto;
->>>>>>> agents/theme-upgrade-white-emerald
   letter-spacing: 1px;
   font-weight: 700;
   text-transform: uppercase;
@@ -64,11 +59,7 @@ body {
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
-<<<<<<< HEAD
-  padding: 6px 20px;
-=======
   padding: 6px 16px;
->>>>>>> agents/theme-upgrade-white-emerald
   background: #0f3d3e;
   color: #ffffff;
   border-radius: 6px;
