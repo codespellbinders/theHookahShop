@@ -1,0 +1,82 @@
+.age-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.age-card {
+  background: #1e1e2f;
+  padding: 40px;
+  border-radius: 16px;
+  width: 400px;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+}
+
+.age-heading {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #ffffff;
+}
+
+.age-desc {
+  font-size: 14px;
+  color: #cccccc;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.age-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.age-yes {
+  background: #0f3d3e;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.age-yes:hover {
+  background: #145a5b;
+  transform: translateY(-2px);
+}
+
+.age-no {
+  background: transparent;
+  border: 1px solid #ff4d4d;
+  color: #ff4d4d;
+  padding: 12px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.age-no:hover {
+  background: #ff4d4d;
+  color: #ffffff;
+}
+
+/* Responsive tweaks */
+@media (max-width: 480px) {
+  .age-card { padding: 24px; }
+  .age-heading { font-size: 22px; }
+  .age-desc { font-size: 13px; margin-bottom: 18px; }
+  .age-yes, .age-no { padding: 10px 14px; }
+}
