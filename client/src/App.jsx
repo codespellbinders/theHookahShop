@@ -12,6 +12,7 @@ import AuthSignup from "./pages/AuthSignup";
 import AuthVerify from "./pages/AuthVerify";
 import WhatsAppButton from "./components/layout/WhatsAppButton";
 import Footer from "./components/layout/Footer";
+import AgeVerification from "./components/layout/AgeVerification";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminProducts from "./pages/admin/AdminProducts";
 import { getAdminToken } from "./services/api";
@@ -48,6 +49,7 @@ function App() {
 
   return (
     <>
+      <AgeVerification />
       <Navbar />
       <CartDrawer />
       <WhatsAppButton />
