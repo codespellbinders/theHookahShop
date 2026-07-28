@@ -97,7 +97,7 @@ function Category() {
   return (
     <section className="products-section">
       <div className="products-container">
-        <h1 className="products-title">{categoryTitle}</h1>
+        <h1 className="section-title">{categoryTitle}</h1>
 
         {loading && <p className="muted-message">Loading category...</p>}
         {error && <p className="error-message">{error}</p>}
@@ -107,7 +107,7 @@ function Category() {
             {groupedSections.length ? (
               groupedSections.map((section) => (
                 <div className="category-section" key={section.key}>
-                  <h2 className="category-section-title">{section.title}</h2>
+                  <h2 className="section-title">{section.title}</h2>
                   <div className="products-grid">
                     {section.products.map((product) => (
                       <ProductCard key={product.id} product={product} />
