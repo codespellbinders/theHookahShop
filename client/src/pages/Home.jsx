@@ -49,7 +49,7 @@ function Home() {
     return (
       <section className="products-section" key={category.id}>
         <div className="products-container">
-          <h2 className="products-title">{category.name.toUpperCase()}</h2>
+          <h2 className="section-title">{category.name.toUpperCase()}</h2>
 
           <ProductSlider products={filtered} />
 
@@ -70,7 +70,7 @@ function Home() {
       {loading ? (
         <section className="products-section">
           <div className="products-container">
-            <h2 className="products-title">Loading products...</h2>
+            <h2 className="section-title">Loading products...</h2>
           </div>
         </section>
       ) : null}
