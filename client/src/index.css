@@ -51,11 +51,12 @@ body {
 .section-title {
   text-align: center;
   font-size: 30px;
-  margin: 40px auto 24px auto;
+  margin: 40px auto 24px;
   letter-spacing: 0.5px;
   font-weight: 700;
   text-transform: uppercase;
-  display: inline-block;
+  /* Make this a block with fit-content width so margin:auto centers reliably */
+  display: block;
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
