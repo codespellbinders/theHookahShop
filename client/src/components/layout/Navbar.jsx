@@ -215,7 +215,7 @@ function Navbar() {
       ) : null}
 
       <div className="announcement-bar">
-        <div className="announcement-track">🚚 Free Delivery on Orders Above Rs.50,000 – Order Now & Save</div>
+        <div className="announcement-track">Orders are processed only after advance payment. Thanks for understanding.</div>
       </div>
     </header>
   );

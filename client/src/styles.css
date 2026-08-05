@@ -327,9 +327,12 @@ h1, h2, h3 {
 .whatsapp-float {
   position: fixed;
   bottom: 22px;
-  right: 22px;
-  z-index: 1200;
+  left: 22px; /* bottom-left placement */
+  right: auto;
+  top: auto;
+  z-index: 1400; /* ensure it's above navbar */
   text-decoration: none;
+  display: block;
 }
 
 .wa-btn {
@@ -352,6 +355,7 @@ h1, h2, h3 {
   content: "Chat with us";
   font-size: 14px;
   line-height: 1;
+  margin-left: 8px; /* ensure spacing between icon and text */
 }
 
 .wa-btn:hover {
