@@ -41,22 +41,9 @@
 }
 
 .product-image-wrapper::before {
+  /* glassy shine removed — keep an empty element for compatibility but hide it */
   content: "";
-  position: absolute;
-  top: -100%;
-  left: -100%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    120deg,
-    rgba(255, 255, 255, 0.1) 30%,
-    rgba(255, 255, 255, 0.4) 50%,
-    rgba(255, 255, 255, 0.1) 70%
-  );
-  transform: rotate(25deg);
-  transition: all 0.7s ease;
-  pointer-events: none;
-  z-index: 2;
+  display: none;
 }
 
 .product-image-wrapper img {
@@ -95,8 +82,8 @@
 }
 
 .product-card:hover .product-image-wrapper::before {
-  top: 100%;
-  left: 100%;
+  /* keep hidden on hover as well */
+  display: none;
 }
 
 /* INFO */
