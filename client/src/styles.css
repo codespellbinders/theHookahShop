@@ -473,8 +473,8 @@ h1, h2, h3 {
   letter-spacing: 0.5px;
   font-weight: 700;
   text-transform: uppercase;
-  display: inline-block;
-  width: fit-content;
+  display: table;
+  width: auto;
   padding: 6px 16px;
   background: #0f3d3e;
   color: #ffffff;
