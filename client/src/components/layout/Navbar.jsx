@@ -129,12 +129,8 @@ function Navbar() {
       ) : null}
 
       <nav className="navbar-menu">
-        <NavLink to="/">
-          HOME
-        </NavLink>
-        <NavLink to="/about">
-          ABOUT US
-        </NavLink>
+        <NavLink to="/">HOME</NavLink>
+        <NavLink to="/about">ABOUT US</NavLink>
 
         {parentCategories.map((category) => {
           const children = childCategoriesByParent.get(String(category.id)) || [];
@@ -203,7 +199,7 @@ function Navbar() {
             return (
               <Link
                 key={category.id}
-                to={`/category/${category.slug}`}
+                to={`/category/${category.slug`}
                 className="mobile-link"
                 onClick={() => setMobileMenu(false)}
               >
@@ -215,7 +211,7 @@ function Navbar() {
       ) : null}
 
       <div className="announcement-bar">
-        <div className="announcement-track">🚚 Free Delivery on Orders Above Rs.50,000 – Order Now & Save</div>
+        <div className="announcement-track">Orders are processed only after advance payment. Thanks for understanding.</div>
       </div>
     </header>
   );
