@@ -199,7 +199,7 @@ function Navbar() {
             return (
               <Link
                 key={category.id}
-                to={`/category/${category.slug`}
+                to={`/category/${category.slug}`}
                 className="mobile-link"
                 onClick={() => setMobileMenu(false)}
               >
