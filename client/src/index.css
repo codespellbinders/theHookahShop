@@ -46,16 +46,19 @@ body {
   width: 90%;
   max-width: 1400px;
   margin: auto;
+  text-align: center; /* center section titles and inline content in product/category sections */
 }
 
 .section-title {
   text-align: center;
   font-size: 30px;
-  margin: 40px auto 24px auto;
+  margin: 40px auto 24px;
   letter-spacing: 0.5px;
   font-weight: 700;
   text-transform: uppercase;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 6px 16px;
   background: #0f3d3e;
   color: #ffffff;
@@ -64,6 +67,10 @@ body {
   margin-right: auto;
   max-width: 100%;
   box-sizing: border-box;
+}
+
+@media (max-width: 700px) {
+  .section-title { font-size: 22px; margin: 32px auto 20px auto; padding: 6px 14px; }
 }
 
 @media (max-width: 700px) {
@@ -83,6 +90,7 @@ body {
 .category-section:last-child {
   margin-bottom: 0;
 }
+
 
 @media (max-width: 900px) {
   .section-title { font-size: 24px; padding: 6px 12px; }

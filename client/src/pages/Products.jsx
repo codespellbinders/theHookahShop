@@ -30,7 +30,7 @@ function Products() {
   return (
     <section className="products-section">
       <div className="products-container">
-        <h1 className="products-title">ALL PRODUCTS</h1>
+        <h1 className="section-title">ALL PRODUCTS</h1>
 
         {loading && <p className="muted-message">Loading products...</p>}
         {error && <p className="error-message">{error}</p>}
