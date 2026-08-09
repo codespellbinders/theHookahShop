@@ -281,6 +281,9 @@ h1, h2, h3 {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  display: block;
+  background: #000;
 }
 
 .hero-overlay {
@@ -309,7 +312,7 @@ h1, h2, h3 {
   letter-spacing: 0.5px;
   font-weight: 700;
   text-transform: uppercase;
-  display: block;
+  display: inline-block;
   padding: 6px 16px;
   background: #0f3d3e;
   color: #ffffff;
@@ -317,6 +320,7 @@ h1, h2, h3 {
   margin-left: auto;
   margin-right: auto;
   max-width: 100%;
+  box-sizing: border-box;
 }
 
 .section-title::after { content: none; }
