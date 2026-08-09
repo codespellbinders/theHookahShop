@@ -129,12 +129,8 @@ function Navbar() {
       ) : null}
 
       <nav className="navbar-menu">
-        <NavLink to="/">
-          HOME
-        </NavLink>
-        <NavLink to="/about">
-          ABOUT US
-        </NavLink>
+        <NavLink to="/">HOME</NavLink>
+        <NavLink to="/about">ABOUT US</NavLink>
 
         {parentCategories.map((category) => {
           const children = childCategoriesByParent.get(String(category.id)) || [];
