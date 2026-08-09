@@ -330,9 +330,10 @@ h1, h2, h3 {
   left: 22px; /* bottom-left placement */
   right: auto;
   top: auto;
-  z-index: 1400; /* ensure it's above navbar */
+  z-index: 99999 !important; /* ensure it's above navbar and overlays */
   text-decoration: none;
   display: block;
+  pointer-events: auto;
 }
 
 .wa-btn {
@@ -388,6 +389,7 @@ h1, h2, h3 {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  z-index: 0; /* keep behind overlay and content */
 }
 
 .hero-overlay {
@@ -473,12 +475,19 @@ h1, h2, h3 {
   letter-spacing: 0.5px;
   font-weight: 700;
   text-transform: uppercase;
-  display: table;
+  display: inline-block;
   width: auto;
   padding: 6px 16px;
   background: #0f3d3e;
   color: #ffffff;
   border-radius: 6px;
+}
+
+/* ensure section titles inside products containers are centered regardless of parent text-align */
+.products-container .section-title {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  display: inline-block !important;
 }
 
 .section-title::after { content: none; }
